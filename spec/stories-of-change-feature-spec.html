@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stories of Change — Feature Concept & Spec | mGrant</title>
+<style>
+  :root {
+    --bg: #fafaf9;
+    --surface: #ffffff;
+    --border: #e7e5e4;
+    --text: #1c1917;
+    --text-muted: #78716c;
+    --accent: #2563eb;
+    --accent-light: #eff6ff;
+    --green: #16a34a;
+    --green-light: #f0fdf4;
+    --orange: #ea580c;
+    --orange-light: #fff7ed;
+    --red: #dc2626;
+    --red-light: #fef2f2;
+    --purple: #7c3aed;
+    --purple-light: #f5f3ff;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    font-size: 15px;
+  }
+  .container { max-width: 960px; margin: 0 auto; padding: 40px 24px; }
+
+  /* Header */
+  .header { margin-bottom: 48px; }
+  .header .badge {
+    display: inline-block;
+    background: var(--accent-light);
+    color: var(--accent);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 100px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .header h1 {
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    margin-bottom: 8px;
+  }
+  .header .subtitle {
+    font-size: 17px;
+    color: var(--text-muted);
+    max-width: 680px;
+  }
+  .meta-bar {
+    display: flex;
+    gap: 24px;
+    margin-top: 16px;
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+  .meta-bar span { display: flex; align-items: center; gap: 4px; }
+
+  /* Sections */
+  .section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 32px;
+    margin-bottom: 24px;
+  }
+  .section h2 {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section h2 .num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    background: var(--accent);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+    border-radius: 8px;
+    flex-shrink: 0;
+  }
+  .section h3 {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 20px 0 10px;
+    color: var(--text);
+  }
+  .section p { margin-bottom: 12px; color: #44403c; }
+
+  /* Callouts */
+  .callout {
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin: 16px 0;
+    font-size: 14px;
+  }
+  .callout.recommend { background: var(--green-light); border-left: 3px solid var(--green); }
+  .callout.warn { background: var(--orange-light); border-left: 3px solid var(--orange); }
+  .callout.info { background: var(--accent-light); border-left: 3px solid var(--accent); }
+  .callout.purple { background: var(--purple-light); border-left: 3px solid var(--purple); }
+  .callout strong { font-weight: 600; }
+
+  /* Tables */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 14px;
+  }
+  th, td {
+    text-align: left;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  th {
+    background: #f5f5f4;
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    color: var(--text-muted);
+  }
+  tr:last-child td { border-bottom: none; }
+  td code {
+    background: #f5f5f4;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 13px;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+  }
+
+  /* Diagram */
+  .diagram {
+    background: #1c1917;
+    color: #a8a29e;
+    padding: 24px;
+    border-radius: 8px;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 13px;
+    line-height: 1.8;
+    overflow-x: auto;
+    margin: 16px 0;
+    white-space: pre;
+  }
+  .diagram .highlight { color: #60a5fa; }
+  .diagram .green { color: #4ade80; }
+  .diagram .orange { color: #fb923c; }
+  .diagram .dim { color: #57534e; }
+
+  /* Flow */
+  .flow-grid {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr auto 1fr;
+    gap: 0;
+    align-items: center;
+    margin: 20px 0;
+  }
+  .flow-box {
+    background: var(--accent-light);
+    border: 1px solid #bfdbfe;
+    border-radius: 10px;
+    padding: 16px;
+    text-align: center;
+  }
+  .flow-box.green-box {
+    background: var(--green-light);
+    border-color: #bbf7d0;
+  }
+  .flow-box.purple-box {
+    background: var(--purple-light);
+    border-color: #c4b5fd;
+  }
+  .flow-box h4 { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .flow-box p { font-size: 12px; color: var(--text-muted); margin: 0; }
+  .flow-arrow {
+    text-align: center;
+    font-size: 20px;
+    color: var(--text-muted);
+    padding: 0 4px;
+  }
+
+  /* Field spec table */
+  .field-table { font-size: 13px; }
+  .field-table th { font-size: 11px; }
+  .field-table td { padding: 8px 10px; }
+  .field-table .layout-row {
+    background: #fafaf9;
+    font-weight: 600;
+    color: var(--accent);
+  }
+
+  /* Comparison grid */
+  .compare-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+    margin: 16px 0;
+  }
+  .compare-card {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+  }
+  .compare-card h4 {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  .compare-card p { font-size: 13px; color: var(--text-muted); margin: 0; }
+  .compare-card.active {
+    border-color: var(--green);
+    background: var(--green-light);
+  }
+  .compare-card .tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 100px;
+    margin-bottom: 8px;
+  }
+  .compare-card .tag.keep { background: #e0e7ff; color: #3730a3; }
+  .compare-card .tag.new { background: #dcfce7; color: #166534; }
+
+  /* List */
+  ul, ol { padding-left: 20px; margin: 8px 0; }
+  li { margin-bottom: 6px; font-size: 14px; color: #44403c; }
+
+  /* Separator */
+  .sep { height: 1px; background: var(--border); margin: 32px 0; }
+
+  /* Permission matrix */
+  .perm-yes { color: var(--green); font-weight: 600; }
+  .perm-no { color: #d6d3d1; }
+  .perm-cond { color: var(--orange); font-weight: 500; font-size: 12px; }
+
+  @media (max-width: 700px) {
+    .compare-grid { grid-template-columns: 1fr; }
+    .flow-grid { grid-template-columns: 1fr; }
+    .flow-arrow { transform: rotate(90deg); padding: 8px 0; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="badge">Feature Concept</div>
+    <h1>Stories of Change</h1>
+    <p class="subtitle">A central impact storytelling module for mGrant — where NGOs capture ground-level stories and comms teams curate them across all projects, without diving into individual grants.</p>
+    <div class="meta-bar">
+      <span>Platform: mGrant (Frappe v16)</span>
+      <span>Date: 16 April 2026</span>
+      <span>Status: Spec v2 — Decisions Locked</span>
+    </div>
+  </div>
+
+  <!-- Section 1: The Problem -->
+  <div class="section">
+    <h2><span class="num">1</span> The Problem</h2>
+    <p>Today, impact evidence is scattered across three unconnected surfaces inside a Grant:</p>
+    <div class="compare-grid">
+      <div class="compare-card">
+        <span class="tag keep">Exists</span>
+        <h4>Field Visit Report</h4>
+        <p>Structured compliance tool for PMs. Checklist-driven. 0 records on staging — underused or recently added. Lives in "LIC" module.</p>
+      </div>
+      <div class="compare-card">
+        <span class="tag keep">Exists</span>
+        <h4>File Section (Attachments)</h4>
+        <p>Generic Frappe file attachments on the Grant form (MoU, reports). No narrative, no categorization as "impact content". Already synced to Document Registry.</p>
+      </div>
+      <div class="compare-card active">
+        <span class="tag new">New</span>
+        <h4>Stories of Change</h4>
+        <p>Does not exist yet. NGOs have no dedicated place to share impact narratives, photos, or videos. Comms team has no cross-project story feed.</p>
+      </div>
+    </div>
+    <p>The comms team's core pain: they must log into each project's grant to find usable content. There's no central feed, no way to search by theme, geography, or media type, and no curation workflow.</p>
+  </div>
+
+  <!-- Section 2: Recommendation -->
+  <div class="section">
+    <h2><span class="num">2</span> Recommendation: Keep Them Separate</h2>
+
+    <div class="callout recommend">
+      <strong>Verdict: Three distinct things, one unifying hub.</strong><br>
+      Field Visit Report, File Section, and Stories of Change serve different audiences, different purposes, and have different data shapes. Merging them would make each worse. Instead, build Stories of Change as its own DocType and give the comms team a central browsing experience — the same pattern as the Document Registry.
+    </div>
+
+    <h3>Why not merge with Field Visit?</h3>
+    <table>
+      <tr><th style="width:40%">Dimension</th><th>Field Visit Report</th><th>Stories of Change</th></tr>
+      <tr><td><strong>Purpose</strong></td><td>Monitoring &amp; compliance</td><td>Communications &amp; impact showcase</td></tr>
+      <tr><td><strong>Primary creator</strong></td><td>PM / SPM (internal)</td><td>NGO partner + anyone on the grant</td></tr>
+      <tr><td><strong>Data shape</strong></td><td>Structured checklist, scores, observations</td><td>Free-form narrative + rich media gallery</td></tr>
+      <tr><td><strong>Consumer</strong></td><td>Grant manager reviewing delivery</td><td>Comms team picking stories for reports, website, social</td></tr>
+      <tr><td><strong>Approval need</strong></td><td>Internal sign-off</td><td>Light curation (featured / not featured)</td></tr>
+      <tr><td><strong>Frequency</strong></td><td>Tied to visit schedule</td><td>Anytime — whenever something noteworthy happens</td></tr>
+    </table>
+
+    <div class="callout recommend">
+      <strong>Decision: New "Stories of Change" tab on Grant form.</strong> It will sit after the Field Visit tab. This keeps the Grant form organized without hiding stories inside another tab. The tab will show linked stories with an "+ Add Story" button and a "View All" link to the central hub.
+    </div>
+  </div>
+
+  <!-- Section 3: Architecture -->
+  <div class="section">
+    <h2><span class="num">3</span> Architecture Overview</h2>
+
+    <div class="flow-grid">
+      <div class="flow-box">
+        <h4>NGO / PM uploads story</h4>
+        <p>Inside Grant context</p>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box green-box">
+        <h4>Story of Change</h4>
+        <p>DocType with media gallery</p>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box purple-box">
+        <h4>Central Stories Hub</h4>
+        <p>Comms team browses all</p>
+      </div>
+    </div>
+
+    <div class="diagram"><span class="dim">┌─────────────────────────────────────────────────────────────────┐</span>
+<span class="dim">│</span>  <span class="highlight">Grant Form</span>                                                      <span class="dim">│</span>
+<span class="dim">│</span>  ┌──────────────────────────────────────────────────────────┐   <span class="dim">│</span>
+<span class="dim">│</span>  │ Details│Budget│LFA│...│Field Visit│<span class="green">Stories of Change</span>│Files│   <span class="dim">│</span>
+<span class="dim">│</span>  │                                    ════════════════        │   <span class="dim">│</span>
+<span class="dim">│</span>  │ <span class="orange">3 stories</span>  │  1 featured  │  Last: 12 Mar 2026          │   <span class="dim">│</span>
+<span class="dim">│</span>  │                                                            │   <span class="dim">│</span>
+<span class="dim">│</span>  │ • "Sunita's journey..."                       <span class="green">Featured</span>    │   <span class="dim">│</span>
+<span class="dim">│</span>  │ • "Community water project..."                <span class="dim">Draft</span>       │   <span class="dim">│</span>
+<span class="dim">│</span>  │                                                            │   <span class="dim">│</span>
+<span class="dim">│</span>  │         <span class="green">[+ Add Story]</span>     <span class="dim">[View All Stories →]</span>           │   <span class="dim">│</span>
+<span class="dim">│</span>  └──────────────────────────────────────────────────────────┘   <span class="dim">│</span>
+<span class="dim">└─────────────────────────────────────────────────────────────────┘</span>
+                          <span class="dim">│</span>
+                          <span class="dim">│ linked via</span> <span class="orange">grant</span> <span class="dim">field</span>
+                          <span class="dim">▼</span>
+<span class="dim">┌─────────────────────────────────────────────────────────────────┐</span>
+<span class="dim">│</span>  <span class="green">Story of Change</span> <span class="dim">(DocType — regular, non-submittable)</span>          <span class="dim">│</span>
+<span class="dim">│</span>  ├── title, narrative (Text Editor)                            <span class="dim">│</span>
+<span class="dim">│</span>  ├── grant → Link(Grant), ngo → fetched, project → fetched     <span class="dim">│</span>
+<span class="dim">│</span>  ├── theme, geography (fetched from grant)                      <span class="dim">│</span>
+<span class="dim">│</span>  ├── story_date, beneficiary_name, beneficiary_quote           <span class="dim">│</span>
+<span class="dim">│</span>  ├── cover_image (Attach Image)                                <span class="dim">│</span>
+<span class="dim">│</span>  ├── <span class="orange">media</span> → child table: Story of Change Media                <span class="dim">│</span>
+<span class="dim">│</span>  │       ├── media_type (Photo / Video / Document)              <span class="dim">│</span>
+<span class="dim">│</span>  │       ├── file (Attach), caption                             <span class="dim">│</span>
+<span class="dim">│</span>  │       └── video_url (for YouTube/external embeds)            <span class="dim">│</span>
+<span class="dim">│</span>  ├── status: Draft → Submitted → <span class="highlight">Featured</span> / Archived           <span class="dim">│</span>
+<span class="dim">│</span>  └── featured_by, featured_date (set by comms team)            <span class="dim">│</span>
+<span class="dim">└─────────────────────────────────────────────────────────────────┘</span>
+                          <span class="dim">│</span>
+                          <span class="dim">│ Frappe List View with filters</span>
+                          <span class="dim">▼</span>
+<span class="dim">┌─────────────────────────────────────────────────────────────────┐</span>
+<span class="dim">│</span>  <span class="highlight">Central Stories Hub</span> <span class="dim">(Workspace sidebar item → List View)</span>       <span class="dim">│</span>
+<span class="dim">│</span>  ├── Filter by: Project, NGO, Theme, Geography, Status         <span class="dim">│</span>
+<span class="dim">│</span>  ├── Search narrative text                                      <span class="dim">│</span>
+<span class="dim">│</span>  ├── Cover image thumbnail in list (image field)               <span class="dim">│</span>
+<span class="dim">│</span>  └── Comms team marks stories as "Featured"                     <span class="dim">│</span>
+<span class="dim">└─────────────────────────────────────────────────────────────────┘</span></div>
+
+    <div class="callout purple">
+      <strong>Same pattern as Document Registry.</strong> Document Registry aggregates files from everywhere into one searchable list. Stories of Change aggregates impact narratives from all grants into one browsable hub. The comms team never has to enter a Grant form.
+    </div>
+  </div>
+
+  <!-- Section 4: DocType Spec -->
+  <div class="section">
+    <h2><span class="num">4</span> DocType Spec: Story of Change</h2>
+
+    <h3>Overview</h3>
+    <table>
+      <tr><td style="width:30%"><strong>Name</strong></td><td>Story of Change</td></tr>
+      <tr><td><strong>Module</strong></td><td>Mgrant (alongside Document Registry, Gallery)</td></tr>
+      <tr><td><strong>Type</strong></td><td>Regular (non-submittable). Status managed via Select field, optionally with Workflow later.</td></tr>
+      <tr><td><strong>Naming</strong></td><td><code>autoname = "SOC-.YYYY.-.####"</code> → SOC-2026-0001</td></tr>
+      <tr><td><strong>Track Changes</strong></td><td>Yes</td></tr>
+    </table>
+
+    <h3>Fields</h3>
+    <table class="field-table">
+      <tr><th>#</th><th>Label</th><th>Fieldname</th><th>Fieldtype</th><th>Options</th><th>Mandatory</th><th>Notes</th></tr>
+
+      <tr class="layout-row"><td colspan="7">TAB BREAK: Story</td></tr>
+      <tr class="layout-row"><td colspan="7">SECTION: Story Details</td></tr>
+      <tr><td>1</td><td>Title</td><td><code>title</code></td><td>Data</td><td>—</td><td>Yes</td><td>Short headline. in_list_view, bold</td></tr>
+      <tr><td>2</td><td>Story Date</td><td><code>story_date</code></td><td>Date</td><td>—</td><td>Yes</td><td>When the event/change happened</td></tr>
+      <tr><td>3</td><td>Status</td><td><code>status</code></td><td>Select</td><td>Draft / Submitted / Featured / Archived</td><td>—</td><td>Default: Draft. in_list_view. Indicator colors below.</td></tr>
+      <tr class="layout-row"><td colspan="7">COLUMN BREAK</td></tr>
+      <tr><td>4</td><td>Grant</td><td><code>grant</code></td><td>Link</td><td>Grant</td><td>Yes</td><td>search_index</td></tr>
+      <tr><td>5</td><td>Grant Name</td><td><code>grant_name</code></td><td>Data</td><td>—</td><td>—</td><td>fetch_from: grant.grant_name, read_only</td></tr>
+      <tr><td>6</td><td>NGO</td><td><code>ngo</code></td><td>Link</td><td>NGO</td><td>—</td><td>fetch_from: grant.ngo, read_only, in_list_view</td></tr>
+      <tr><td>7</td><td>NGO Name</td><td><code>ngo_name</code></td><td>Data</td><td>—</td><td>—</td><td>fetch_from: ngo.ngo_name, read_only</td></tr>
+      <tr><td>8</td><td>Project</td><td><code>project</code></td><td>Data</td><td>—</td><td>—</td><td>fetch_from: grant.project, read_only</td></tr>
+      <tr><td>9</td><td>Donor</td><td><code>donor</code></td><td>Link</td><td>Donor</td><td>—</td><td>fetch_from: grant.donor, read_only, search_index</td></tr>
+
+      <tr class="layout-row"><td colspan="7">SECTION: Narrative</td></tr>
+      <tr><td>10</td><td>Narrative</td><td><code>narrative</code></td><td>Text Editor</td><td>—</td><td>Yes</td><td>The story itself — rich text, can include inline images</td></tr>
+
+      <tr class="layout-row"><td colspan="7">SECTION: Beneficiary (collapsible)</td></tr>
+      <tr><td>11</td><td>Beneficiary Name</td><td><code>beneficiary_name</code></td><td>Data</td><td>—</td><td>—</td><td>Optional — name of the person featured</td></tr>
+      <tr><td>12</td><td>Beneficiary Quote</td><td><code>beneficiary_quote</code></td><td>Small Text</td><td>—</td><td>—</td><td>Direct quote for comms usage</td></tr>
+      <tr class="layout-row"><td colspan="7">COLUMN BREAK</td></tr>
+      <tr><td>13</td><td>Beneficiary Location</td><td><code>beneficiary_location</code></td><td>Data</td><td>—</td><td>—</td><td>Village/district</td></tr>
+      <tr><td>14</td><td>Consent Obtained</td><td><code>consent_obtained</code></td><td>Check</td><td>—</td><td>—</td><td><strong>Required on submit.</strong> Label: <em>"I confirm that the beneficiary has consented to this story and associated media being used by the communications team for reports, publications, and other communications."</em> Enforced via mandatory_depends_on: status == Submitted.</td></tr>
+
+      <tr class="layout-row"><td colspan="7">SECTION: Cover Image</td></tr>
+      <tr><td>15</td><td>Cover Image</td><td><code>cover_image</code></td><td>Attach Image</td><td>—</td><td>—</td><td>Primary image shown in list view thumbnail</td></tr>
+      <tr><td>16</td><td>Image Preview</td><td><code>image</code></td><td>Image</td><td>cover_image</td><td>—</td><td>Renders the cover image on the form</td></tr>
+
+      <tr class="layout-row"><td colspan="7">SECTION: Media Gallery</td></tr>
+      <tr><td>17</td><td>Media</td><td><code>media</code></td><td>Table</td><td>Story of Change Media</td><td>—</td><td>Child table — multiple photos, videos, docs</td></tr>
+
+      <tr class="layout-row"><td colspan="7">SECTION: Classification (collapsible)</td></tr>
+      <tr><td>18</td><td>Theme</td><td><code>theme</code></td><td>Link</td><td>Focus Area</td><td>—</td><td>Reuse existing Focus Area master. in_standard_filter</td></tr>
+      <tr><td>19</td><td>Story Type</td><td><code>story_type</code></td><td>Select</td><td>Beneficiary Story / Community Impact / Innovation / Milestone / Event</td><td>—</td><td>in_standard_filter</td></tr>
+      <tr class="layout-row"><td colspan="7">COLUMN BREAK</td></tr>
+      <tr><td>20</td><td>State</td><td><code>state</code></td><td>Data</td><td>—</td><td>—</td><td>Fetched from grant geography. in_standard_filter</td></tr>
+      <tr><td>21</td><td>District</td><td><code>district</code></td><td>Data</td><td>—</td><td>—</td><td>Fetched or manually entered</td></tr>
+
+      <tr class="layout-row"><td colspan="7">TAB BREAK: Curation</td></tr>
+      <tr class="layout-row"><td colspan="7">SECTION: Comms Curation</td></tr>
+      <tr><td>22</td><td>Featured</td><td><code>is_featured</code></td><td>Check</td><td>—</td><td>—</td><td>Comms team flags best stories</td></tr>
+      <tr><td>23</td><td>Featured By</td><td><code>featured_by</code></td><td>Link</td><td>User</td><td>—</td><td>Auto-set when is_featured toggled. read_only</td></tr>
+      <tr><td>24</td><td>Featured Date</td><td><code>featured_date</code></td><td>Date</td><td>—</td><td>—</td><td>Auto-set. read_only</td></tr>
+      <tr><td>25</td><td>Comms Notes</td><td><code>comms_notes</code></td><td>Small Text</td><td>—</td><td>—</td><td>Internal notes by comms team (not visible to NGO)</td></tr>
+      <tr><td>26</td><td>Used In</td><td><code>used_in</code></td><td>Small Text</td><td>—</td><td>—</td><td>Where the story was published: "Annual Report 2026", "Website", etc.</td></tr>
+    </table>
+
+    <h3>Child Table: Story of Change Media</h3>
+    <table class="field-table">
+      <tr><th>#</th><th>Label</th><th>Fieldname</th><th>Fieldtype</th><th>Options</th><th>Notes</th></tr>
+      <tr><td>1</td><td>Media Type</td><td><code>media_type</code></td><td>Select</td><td>Photo / Video / Document</td><td>in_list_view</td></tr>
+      <tr><td>2</td><td>File</td><td><code>file</code></td><td>Attach</td><td>—</td><td>For photos, videos, PDFs. in_list_view</td></tr>
+      <tr><td>3</td><td>Video URL</td><td><code>video_url</code></td><td>Data (URL)</td><td>—</td><td>For YouTube/Vimeo links. Optional — user can upload video via File field OR paste external URL, or both.</td></tr>
+      <tr><td>4</td><td>Caption</td><td><code>caption</code></td><td>Small Text</td><td>—</td><td>Description of the media item. in_list_view</td></tr>
+    </table>
+
+    <h3>Status Indicators</h3>
+    <table>
+      <tr><th>Status</th><th>Color</th><th>Meaning</th></tr>
+      <tr><td>Draft</td><td style="color:#78716c">● Grey</td><td>NGO is still writing / uploading</td></tr>
+      <tr><td>Submitted</td><td style="color:#2563eb">● Blue</td><td>NGO has marked it ready for review</td></tr>
+      <tr><td>Featured</td><td style="color:#16a34a">● Green</td><td>Comms team has highlighted this story</td></tr>
+      <tr><td>Archived</td><td style="color:#78716c">● Light Grey</td><td>No longer active / relevant</td></tr>
+    </table>
+  </div>
+
+  <!-- Section 5: Permissions -->
+  <div class="section">
+    <h2><span class="num">5</span> Permissions</h2>
+
+    <table>
+      <tr>
+        <th>Role</th>
+        <th>Read</th>
+        <th>Write</th>
+        <th>Create</th>
+        <th>Delete</th>
+        <th>If Owner</th>
+        <th>Notes</th>
+      </tr>
+      <tr>
+        <td><strong>NGO User</strong></td>
+        <td class="perm-yes">✓</td>
+        <td class="perm-yes">✓</td>
+        <td class="perm-yes">✓</td>
+        <td class="perm-yes">✓</td>
+        <td class="perm-cond">Write/Delete only</td>
+        <td><strong>Cross-NGO visibility:</strong> Can <em>read</em> all Submitted &amp; Featured stories across all NGOs (peer learning). Can only <em>write/delete</em> own stories (if_owner). Draft stories visible only to owner. RLS via <code>permission_query_conditions</code>: show own stories + others' Submitted/Featured.</td>
+      </tr>
+      <tr>
+        <td><strong>Project Manager</strong></td>
+        <td class="perm-yes">✓</td>
+        <td class="perm-yes">✓</td>
+        <td class="perm-yes">✓</td>
+        <td class="perm-no">✗</td>
+        <td class="perm-no">—</td>
+        <td>Can see stories for assigned grants. Can create stories from field visits.</td>
+      </tr>
+      <tr>
+        <td><strong>CSR Manager</strong></td>
+        <td class="perm-yes">✓</td>
+        <td class="perm-yes">✓</td>
+        <td class="perm-yes">✓</td>
+        <td class="perm-no">✗</td>
+        <td class="perm-no">—</td>
+        <td>Full read across all stories. Can feature/archive.</td>
+      </tr>
+      <tr>
+        <td><strong>Comms User</strong> <span style="color:var(--orange);font-size:12px">(new role)</span></td>
+        <td class="perm-yes">✓</td>
+        <td class="perm-cond">Curation tab only</td>
+        <td class="perm-no">✗</td>
+        <td class="perm-no">✗</td>
+        <td class="perm-no">—</td>
+        <td>Read all stories. Can only edit curation fields (permlevel 1). Cannot modify the story itself.</td>
+      </tr>
+      <tr>
+        <td><strong>Donor User</strong></td>
+        <td class="perm-yes">✓</td>
+        <td class="perm-no">✗</td>
+        <td class="perm-no">✗</td>
+        <td class="perm-no">✗</td>
+        <td class="perm-no">—</td>
+        <td>Read-only for stories in their funded projects. Filtered by donor field.</td>
+      </tr>
+    </table>
+
+    <div class="callout info">
+      <strong>Comms User role:</strong> This is a new, lightweight role. The comms team doesn't need to understand grants or budgets — they just need to browse stories, mark favourites, and note where stories were used. The Curation tab fields sit at <code>permlevel: 1</code>, so only roles with level 1 write access can edit them.
+    </div>
+
+    <div class="callout recommend">
+      <strong>Cross-NGO visibility (peer learning):</strong> NGO users can see Submitted and Featured stories from <em>all</em> NGOs — not just their own. This encourages peer learning and inspiration across the partner network. Draft stories remain private to the creator. Write and delete permissions are restricted to own stories only (if_owner). The <code>permission_query_conditions</code> hook enforces this: <code>(owner = '{user}') OR (status IN ('Submitted', 'Featured'))</code>.
+    </div>
+  </div>
+
+  <!-- Section 6: Central Hub -->
+  <div class="section">
+    <h2><span class="num">6</span> Central Stories Hub — The Comms Experience</h2>
+
+    <p>This is the key differentiator. The comms team accesses "Stories of Change" from the main sidebar — not from inside any grant.</p>
+
+    <h3>How it works (native Frappe, zero custom UI)</h3>
+    <ol>
+      <li><strong>Workspace sidebar entry:</strong> "Stories of Change" appears under the mGrant app sidebar, pointing to the Story of Change List View.</li>
+      <li><strong>List View with standard filters:</strong> Filter by NGO, project/donor, theme, story type, geography (state/district), status, date range.</li>
+      <li><strong>Cover image thumbnail:</strong> The <code>image</code> field renders as a thumbnail in the list — comms can visually browse.</li>
+      <li><strong>"Featured" quick filter:</strong> One click to see only featured stories.</li>
+      <li><strong>Report Builder:</strong> Comms team can build custom reports (e.g., "all featured stories from Maharashtra in FY 2025-26").</li>
+    </ol>
+
+    <div class="callout recommend">
+      <strong>No custom dashboard needed for v1.</strong> Frappe's native List View + filters + Report Builder gives the comms team everything they need. A visual gallery dashboard (card layout with cover images) can be a v2 enhancement using a custom Page.
+    </div>
+
+    <h3>Comparison with Document Registry approach</h3>
+    <table>
+      <tr><th>Aspect</th><th>Document Registry</th><th>Stories of Change</th></tr>
+      <tr><td>Data source</td><td>Auto-synced from File attachments via hooks</td><td>Directly created by users (no sync needed)</td></tr>
+      <tr><td>Central view</td><td>List View of Document Registry DocType</td><td>List View of Story of Change DocType</td></tr>
+      <tr><td>Filters</td><td>Source DocType, category, partner, project</td><td>NGO, project, theme, geography, story type, status</td></tr>
+      <tr><td>Extra dimension</td><td>Compliance status</td><td>Featured flag + comms curation</td></tr>
+    </table>
+    <p>The key difference: Document Registry is a <em>mirror</em> (sync from files). Stories of Change is a <em>source</em> (created directly here). Simpler architecture — no hooks needed.</p>
+  </div>
+
+  <!-- Section 7: Grant Integration -->
+  <div class="section">
+    <h2><span class="num">7</span> Grant-Side Integration — New Tab</h2>
+
+    <p>Stories of Change gets its own dedicated tab on the Grant form, placed <strong>after the Field Visit tab</strong>. This keeps the tab bar logical: monitoring activities (Field Visit) → impact evidence (Stories of Change) → files.</p>
+
+    <h3>Implementation approach</h3>
+    <p>Since Story of Change is a separate DocType (not a child table), the tab is implemented via a <strong>Custom Tab Break + HTML field</strong> on the Grant form. A client script fetches linked stories and renders a summary list with action buttons.</p>
+
+    <div class="diagram"><span class="dim">Grant Form Tab Bar:</span>
+<span class="dim">┌────────┬────────┬─────┬─────┬─────────────┬</span><span class="green">══════════════════</span><span class="dim">┬───────┐</span>
+<span class="dim">│</span>Details <span class="dim">│</span>Budget <span class="dim">│</span> LFA <span class="dim">│</span> ... <span class="dim">│</span>Field Visit  <span class="dim">│</span><span class="green"> Stories of Change </span><span class="dim">│</span> Files <span class="dim">│</span>
+<span class="dim">└────────┴────────┴─────┴─────┴─────────────┴</span><span class="green">══════════════════</span><span class="dim">┴───────┘</span>
+
+<span class="dim">Tab contents (HTML rendered by client script):</span>
+
+<span class="dim">┌──────────────────────────────────────────────────────────────┐</span>
+<span class="dim">│</span>  <span class="green">[+ Add Story of Change]</span>                                     <span class="dim">│</span>
+<span class="dim">│</span>                                                              <span class="dim">│</span>
+<span class="dim">│</span>  ┌────────┬──────────────────────────────┬──────────┬───────┐ <span class="dim">│</span>
+<span class="dim">│</span>  │ <span class="highlight">Date</span>   │ <span class="highlight">Title</span>                        │ <span class="highlight">Status</span>   │       │ <span class="dim">│</span>
+<span class="dim">│</span>  ├────────┼──────────────────────────────┼──────────┼───────┤ <span class="dim">│</span>
+<span class="dim">│</span>  │ 12 Mar │ Sunita's journey to fina...  │ <span class="green">Featured</span> │ Open →│ <span class="dim">│</span>
+<span class="dim">│</span>  │ 28 Feb │ Community water project t...  │ <span class="dim">Draft</span>    │ Open →│ <span class="dim">│</span>
+<span class="dim">│</span>  │ 15 Jan │ Youth training programme...   │ <span class="highlight">Submitted</span>│ Open →│ <span class="dim">│</span>
+<span class="dim">│</span>  └────────┴──────────────────────────────┴──────────┴───────┘ <span class="dim">│</span>
+<span class="dim">│</span>                                                              <span class="dim">│</span>
+<span class="dim">│</span>  Showing 3 of 3 stories  │  <span class="dim">[View All in Stories Hub →]</span>      <span class="dim">│</span>
+<span class="dim">└──────────────────────────────────────────────────────────────┘</span></div>
+
+    <h3>Technical details</h3>
+    <ul>
+      <li>Add a <strong>Custom Tab Break</strong> on the Grant DocType labelled "Stories of Change", inserted after the Field Visit tab.</li>
+      <li>Inside the tab, place a <strong>Custom HTML field</strong> (<code>stories_of_change_html</code>).</li>
+      <li>A Grant <strong>client script</strong> calls <code>frappe.call</code> to fetch stories linked to the current grant, renders the list in the HTML field, and wires up the "+ Add Story" button to <code>frappe.new_doc('Story of Change', { grant: frm.doc.name })</code>.</li>
+      <li>The "View All" link opens the Story of Change List View pre-filtered to the current grant.</li>
+    </ul>
+
+    <div class="callout info">
+      <strong>Voluntary, not mandatory.</strong> There is no requirement for NGOs to submit a minimum number of stories. The tab will simply show "No stories uploaded yet" with the add button if empty.
+    </div>
+  </div>
+
+  <!-- Section 7B: Gallery Repurpose -->
+  <div class="section">
+    <h2><span class="num">7b</span> Repurposing the Gallery DocType</h2>
+
+    <p>The existing <strong>Gallery</strong> DocType in the Mgrant module is a good candidate for repurposing into Story of Change. Here's what it looks like today:</p>
+
+    <table>
+      <tr><th>Property</th><th>Current Value</th></tr>
+      <tr><td>Name</td><td><code>Gallery</code></td></tr>
+      <tr><td>Module</td><td>Mgrant</td></tr>
+      <tr><td>Autoname</td><td><code>format:FILE-{######}</code></td></tr>
+      <tr><td>Records</td><td><strong>0</strong> (completely empty)</td></tr>
+      <tr><td>Fields (4 total)</td><td><code>document_type</code> (Link → DocType), <code>related_to</code> (Dynamic Link), <code>image</code> (Attach, reqd), <code>title</code> (Data, reqd)</td></tr>
+      <tr><td>Permissions</td><td>System Manager, NGO Admin, Partner NGO — all with full CRUD</td></tr>
+    </table>
+
+    <div class="callout recommend">
+      <strong>Decision: Rename Gallery → Story of Change.</strong> Since Gallery has 0 records and was originally meant for photo/document uploads (a purpose now served by the Files section), it will be cleanly repurposed via Frappe's rename_doc. This reuses the existing DB table and keeps git history clean.
+    </div>
+
+    <h3>Migration steps</h3>
+    <ol>
+      <li><strong>Rename</strong> the DocType from "Gallery" to "Story of Change" (Frappe's rename_doc handles the DB table rename).</li>
+      <li><strong>Update autoname</strong> from <code>FILE-{######}</code> to <code>SOC-.YYYY.-.####</code>.</li>
+      <li><strong>Keep the existing 4 fields</strong> and repurpose them:
+        <ul>
+          <li><code>title</code> → stays as-is (story title)</li>
+          <li><code>image</code> → rename to <code>cover_image</code>, change to Attach Image</li>
+          <li><code>document_type</code> + <code>related_to</code> → remove (replaced by direct Grant link)</li>
+        </ul>
+      </li>
+      <li><strong>Add all new fields</strong> per the spec above (narrative, grant, beneficiary, media child table, classification, curation).</li>
+      <li><strong>Update permissions</strong> to match the new role matrix.</li>
+      <li><strong>Set max file size</strong> for video uploads to <strong>50 MB</strong> (via site config or validation in controller).</li>
+    </ol>
+  </div>
+
+  <!-- Section 8: Field Visit connection -->
+  <div class="section">
+    <h2><span class="num">8</span> Connecting Field Visit → Story of Change</h2>
+    <p>Even though we keep them separate, there's a natural workflow: a PM conducts a field visit and wants to capture a story from it.</p>
+
+    <h3>Solution: "Create Story" button on Field Visit Report</h3>
+    <p>Add a custom button to the Field Visit Report form toolbar: <strong>"Create Story of Change"</strong>. When clicked, it opens a new Story of Change form pre-filled with:</p>
+    <ul>
+      <li>Grant (from the field visit)</li>
+      <li>Story date = field visit date</li>
+      <li>A link back to the field visit in the narrative (optional)</li>
+    </ul>
+    <p>This is a one-liner in the Field Visit Report client script:</p>
+    <div class="diagram">frm.add_custom_button('Create Story of Change', () => {
+    frappe.new_doc('Story of Change', {
+        grant: frm.doc.grant,
+        story_date: frm.doc.visit_date
+    });
+}, __('Actions'));</div>
+
+    <p>This keeps both DocTypes clean while providing a smooth workflow bridge.</p>
+  </div>
+
+  <!-- Section 9: v2 Enhancements -->
+  <div class="section">
+    <h2><span class="num">9</span> Future Enhancements (v2+)</h2>
+
+    <table>
+      <tr><th>Enhancement</th><th>Description</th><th>Priority</th></tr>
+      <tr>
+        <td><strong>Gallery Dashboard</strong></td>
+        <td>Custom Page with card-based visual layout showing cover images, title, NGO — Pinterest-style browsing for the comms team.</td>
+        <td>High</td>
+      </tr>
+      <tr>
+        <td><strong>Story Collections</strong></td>
+        <td>Comms team can group featured stories into named collections: "Annual Report 2026", "Website Refresh", "Donor Pitch Deck".</td>
+        <td>Medium</td>
+      </tr>
+      <tr>
+        <td><strong>Auto-sync to Document Registry</strong></td>
+        <td>Media files from Stories of Change auto-register in the Document Registry with category "Stories of Change".</td>
+        <td>Medium</td>
+      </tr>
+      <tr>
+        <td><strong>Notification to Comms</strong></td>
+        <td>When an NGO submits a story (Draft → Submitted), auto-notify users with the Comms User role.</td>
+        <td>High</td>
+      </tr>
+      <tr>
+        <td><strong>Donor Story View</strong></td>
+        <td>Donor portal page showing featured stories from their funded projects — branded, shareable.</td>
+        <td>Low</td>
+      </tr>
+      <tr>
+        <td><strong>AI Summary</strong></td>
+        <td>Auto-generate a 2-line summary from the narrative for use in reports and social media.</td>
+        <td>Low</td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- Section 10: Implementation Plan -->
+  <div class="section">
+    <h2><span class="num">10</span> Implementation Estimate</h2>
+
+    <table>
+      <tr><th>Phase</th><th>What</th><th>Effort</th></tr>
+      <tr>
+        <td><strong>Phase 1</strong></td>
+        <td>Repurpose Gallery → "Story of Change" (rename + extend fields). Create "Story of Change Media" child table. Add to workspace sidebar. Basic permissions.</td>
+        <td>2-3 days</td>
+      </tr>
+      <tr>
+        <td><strong>Phase 2</strong></td>
+        <td>Grant-side integration: new "Stories of Change" tab with HTML summary + client script. "Create Story" button on Field Visit Report.</td>
+        <td>1-2 days</td>
+      </tr>
+      <tr>
+        <td><strong>Phase 3</strong></td>
+        <td>Comms User role. Permlevel-based curation fields. Consent enforcement on submit. 50 MB video upload limit.</td>
+        <td>1-2 days</td>
+      </tr>
+      <tr>
+        <td><strong>Phase 4 (v2)</strong></td>
+        <td>Submission notifications, Gallery dashboard, Story Collections, Document Registry sync.</td>
+        <td>3-5 days</td>
+      </tr>
+    </table>
+
+    <div class="callout recommend">
+      <strong>Total for v1 (Phases 1-3): ~5-7 dev days.</strong> This gives you a fully functional Stories of Change module with central access, role-based permissions, and grant-side integration — all using native Frappe patterns.
+    </div>
+  </div>
+
+  <!-- Section 11: Decisions Locked -->
+  <div class="section">
+    <h2><span class="num">11</span> Decisions Log</h2>
+    <p>All open questions from v1 have been resolved:</p>
+    <table>
+      <tr><th style="width:35%">Question</th><th>Decision</th></tr>
+      <tr>
+        <td>Where on the Grant form?</td>
+        <td><strong>New tab</strong> — "Stories of Change", placed after Field Visit tab.</td>
+      </tr>
+      <tr>
+        <td>Mandatory story submissions?</td>
+        <td><strong>No.</strong> Purely voluntary. No minimum story count per quarter.</td>
+      </tr>
+      <tr>
+        <td>Consent enforcement</td>
+        <td><strong>Yes.</strong> Consent checkbox becomes mandatory when NGO moves story from Draft → Submitted. The NGO is explicitly giving permission for the comms team to use the content.</td>
+      </tr>
+      <tr>
+        <td>Video storage</td>
+        <td><strong>Both.</strong> Allow direct video file upload AND external URL (YouTube/Vimeo). The media child table supports both fields.</td>
+      </tr>
+      <tr>
+        <td>Gallery DocType</td>
+        <td><strong>Repurpose Gallery → Story of Change.</strong> Gallery has 0 records, 4 basic fields, and its original purpose (photo/doc uploads) is now handled by the Files section. Rename and extend it, or delete and create fresh — team's choice.</td>
+      </tr>
+      <tr>
+        <td>Donor portal / external site?</td>
+        <td><strong>Not for now.</strong> Stories stay internal (behind login). No public URLs or SEO fields needed in v1.</td>
+      </tr>
+      <tr>
+        <td>Cross-NGO story visibility?</td>
+        <td><strong>Yes.</strong> NGO users can read all Submitted &amp; Featured stories from other NGOs for peer learning. Drafts remain private. Write/delete restricted to own stories.</td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- Section 12: All Decisions Summary -->
+  <div class="section">
+    <h2><span class="num">12</span> Final Decisions Summary</h2>
+    <table>
+      <tr><th>Item</th><th>Decision</th></tr>
+      <tr><td>Gallery DocType</td><td><strong>Rename</strong> Gallery → Story of Change via rename_doc</td></tr>
+      <tr><td>Consent wording</td><td><em>"I confirm that the beneficiary has consented to this story and associated media being used by the communications team for reports, publications, and other communications."</em></td></tr>
+      <tr><td>Video file size limit</td><td><strong>50 MB</strong> max per video upload</td></tr>
+      <tr><td>Submission notifications</td><td><strong>Deferred to later phase.</strong> Not part of v1 scope.</td></tr>
+      <tr><td>Grant form placement</td><td>New <strong>"Stories of Change" tab</strong>, after Field Visit tab</td></tr>
+      <tr><td>Story submission frequency</td><td><strong>Voluntary</strong> — no minimum requirement</td></tr>
+      <tr><td>Consent enforcement</td><td><strong>Mandatory</strong> when moving Draft → Submitted</td></tr>
+      <tr><td>Video support</td><td><strong>Both</strong> direct upload (≤50 MB) and external URLs</td></tr>
+      <tr><td>External/donor portal</td><td><strong>Not in v1.</strong> Internal only, behind login.</td></tr>
+      <tr><td>Cross-NGO visibility</td><td><strong>Yes.</strong> NGOs can read all Submitted/Featured stories across partners (peer learning). Drafts private, write/delete own only.</td></tr>
+    </table>
+
+    <div class="callout recommend">
+      <strong>Spec is locked.</strong> All decisions are resolved. This spec is ready for developer handoff. The only deferred item (notifications) can be picked up in a later phase without affecting the core architecture.
+    </div>
+  </div>
+
+  <div style="text-align:center;padding:32px 0;color:var(--text-muted);font-size:13px;">
+    Generated for mGrant — Dhwani RIS &middot; April 2026
+  </div>
+
+</div>
+</body>
+</html>

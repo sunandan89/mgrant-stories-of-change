@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stories of Change — Wireframes | mGrant</title>
+<style>
+:root {
+  --frappe-bg: #f4f5f6;
+  --frappe-surface: #ffffff;
+  --frappe-sidebar-bg: #f8f8f8;
+  --frappe-border: #d1d5db;
+  --frappe-border-light: #e5e7eb;
+  --frappe-text: #1f272e;
+  --frappe-text-muted: #6b7280;
+  --frappe-text-light: #9ca3af;
+  --frappe-primary: #2490ef;
+  --frappe-primary-dark: #1a73c7;
+  --frappe-green: #29cd42;
+  --frappe-green-bg: #edf9ee;
+  --frappe-orange: #ffa00a;
+  --frappe-orange-bg: #fff5e0;
+  --frappe-red: #e24c4c;
+  --frappe-red-bg: #fce8e8;
+  --frappe-blue-bg: #e8f0fe;
+  --frappe-grey-bg: #f4f5f6;
+  --frappe-grey: #6b7280;
+  --radius: 8px;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.06);
+  --shadow-md: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif; background: #1a1a2e; color: var(--frappe-text); font-size: 13px; }
+
+/* Top nav */
+.wireframe-nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: #1a1a2e; border-bottom: 1px solid #2a2a4a;
+  display: flex; align-items: center; padding: 0 24px; height: 52px; gap: 8px;
+}
+.wireframe-nav .logo { color: #fff; font-weight: 700; font-size: 14px; margin-right: 16px; }
+.wireframe-nav .logo span { color: var(--frappe-primary); }
+.nav-btn {
+  padding: 8px 16px; border-radius: 6px; border: 1px solid #2a2a4a;
+  background: transparent; color: #94a3b8; font-size: 12px; font-weight: 500;
+  cursor: pointer; transition: all 0.15s; white-space: nowrap;
+}
+.nav-btn:hover { background: #2a2a4a; color: #fff; }
+.nav-btn.active { background: var(--frappe-primary); color: #fff; border-color: var(--frappe-primary); }
+.nav-label { color: #475569; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; margin-right: 4px; margin-left: 12px; }
+
+/* Screen containers */
+.screen-wrap { padding-top: 68px; padding-bottom: 40px; display: flex; justify-content: center; }
+.screen { display: none; width: 1200px; max-width: 96vw; }
+.screen.active { display: block; }
+
+/* Frappe chrome */
+.frappe-chrome { background: var(--frappe-bg); border-radius: 12px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.3); border: 1px solid #333; }
+.frappe-topbar { background: #fff; height: 48px; display: flex; align-items: center; padding: 0 16px; border-bottom: 1px solid var(--frappe-border-light); gap: 12px; }
+.frappe-topbar .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--frappe-text-muted); }
+.frappe-topbar .breadcrumb a { color: var(--frappe-primary); text-decoration: none; cursor: pointer; }
+.frappe-topbar .spacer { flex: 1; }
+.frappe-topbar .search-box { background: var(--frappe-bg); border: 1px solid var(--frappe-border-light); border-radius: 6px; padding: 6px 12px; font-size: 12px; color: var(--frappe-text-muted); width: 200px; }
+.frappe-topbar .avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--frappe-primary); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 11px; font-weight: 600; }
+.frappe-body { display: flex; min-height: 600px; }
+
+/* Sidebar */
+.frappe-sidebar { width: 220px; background: var(--frappe-sidebar-bg); border-right: 1px solid var(--frappe-border-light); padding: 12px 0; flex-shrink: 0; }
+.sidebar-section { padding: 8px 16px; }
+.sidebar-section-title { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--frappe-text-light); margin-bottom: 8px; }
+.sidebar-item { display: flex; align-items: center; gap: 8px; padding: 7px 12px; border-radius: 6px; color: var(--frappe-text-muted); font-size: 13px; cursor: pointer; margin-bottom: 2px; }
+.sidebar-item:hover { background: #eef0f2; }
+.sidebar-item.active { background: var(--frappe-blue-bg); color: var(--frappe-primary); font-weight: 600; }
+.sidebar-item .icon { width: 16px; text-align: center; font-size: 14px; }
+.sidebar-item .badge-count { margin-left: auto; background: var(--frappe-primary); color: #fff; font-size: 10px; font-weight: 600; padding: 1px 6px; border-radius: 10px; }
+.frappe-main { flex: 1; background: var(--frappe-bg); overflow: hidden; }
+
+/* Form pieces */
+.form-header { background: #fff; padding: 16px 24px; border-bottom: 1px solid var(--frappe-border-light); display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.form-header h1 { font-size: 18px; font-weight: 600; flex: 1; min-width: 200px; }
+.status-badge { padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+.status-draft { background: var(--frappe-grey-bg); color: var(--frappe-grey); }
+.status-submitted { background: var(--frappe-blue-bg); color: var(--frappe-primary); }
+.status-featured { background: var(--frappe-green-bg); color: #16a34a; }
+
+.form-tabs { background: #fff; display: flex; gap: 0; padding: 0 24px; border-bottom: 1px solid var(--frappe-border-light); }
+.form-tab { padding: 10px 16px; font-size: 13px; color: var(--frappe-text-muted); cursor: pointer; border-bottom: 2px solid transparent; font-weight: 500; user-select: none; }
+.form-tab:hover { color: var(--frappe-text); }
+.form-tab.active { color: var(--frappe-primary); border-bottom-color: var(--frappe-primary); font-weight: 600; }
+
+.form-body { padding: 24px; overflow-y: auto; max-height: 480px; }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+.form-section { margin-bottom: 24px; }
+.form-section-title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; color: var(--frappe-text-muted); margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--frappe-border-light); }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 12px; }
+.form-row.full { grid-template-columns: 1fr; }
+.form-field label { display: block; font-size: 11px; font-weight: 600; color: var(--frappe-text-muted); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.3px; }
+.form-field label .req { color: var(--frappe-red); }
+.form-input { width: 100%; padding: 8px 10px; border: 1px solid var(--frappe-border-light); border-radius: 6px; font-size: 13px; background: #fff; color: var(--frappe-text); }
+.form-input.readonly { background: var(--frappe-grey-bg); color: var(--frappe-text-muted); }
+.form-input.select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b7280' d='M3 5l3 3 3-3'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; padding-right: 28px; }
+textarea.form-input { min-height: 80px; resize: vertical; font-family: inherit; }
+
+/* Rich text editor */
+.rich-editor { border: 1px solid var(--frappe-border-light); border-radius: 6px; background: #fff; overflow: hidden; }
+.rich-editor-toolbar { display: flex; gap: 2px; padding: 6px 8px; background: var(--frappe-grey-bg); border-bottom: 1px solid var(--frappe-border-light); }
+.rich-editor-toolbar .tb { width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; border-radius: 4px; cursor: pointer; font-size: 12px; color: var(--frappe-text-muted); font-weight: 700; }
+.rich-editor-toolbar .tb:hover { background: #e5e7eb; }
+.rich-editor-body { padding: 12px; min-height: 120px; font-size: 13px; color: var(--frappe-text-muted); line-height: 1.6; }
+
+/* Image upload */
+.image-upload { border: 2px dashed var(--frappe-border-light); border-radius: 8px; padding: 32px; text-align: center; color: var(--frappe-text-light); cursor: pointer; }
+.image-upload:hover { border-color: var(--frappe-primary); background: var(--frappe-blue-bg); }
+
+/* Child table */
+.child-table { width: 100%; border: 1px solid var(--frappe-border-light); border-radius: 6px; overflow: hidden; }
+.child-table th { background: var(--frappe-grey-bg); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; color: var(--frappe-text-muted); padding: 8px 12px; text-align: left; border-bottom: 1px solid var(--frappe-border-light); }
+.child-table td { padding: 8px 12px; border-bottom: 1px solid var(--frappe-border-light); font-size: 13px; }
+.child-table tr:last-child td { border-bottom: none; }
+.child-table .add-row { color: var(--frappe-primary); cursor: pointer; font-size: 12px; padding: 8px 12px; }
+.file-pill { background: var(--frappe-blue-bg); color: var(--frappe-primary); padding: 2px 8px; border-radius: 4px; font-size: 12px; }
+
+/* Checkbox */
+.checkbox-field { display: flex; align-items: flex-start; gap: 8px; }
+.checkbox-field input[type="checkbox"] { width: 16px; height: 16px; margin-top: 2px; accent-color: var(--frappe-primary); }
+.checkbox-field .cb-label { font-size: 12px; color: var(--frappe-text); line-height: 1.4; }
+
+/* Buttons */
+.btn { padding: 7px 16px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; border: 1px solid transparent; transition: all 0.15s; }
+.btn-primary { background: var(--frappe-primary); color: #fff; }
+.btn-primary:hover { background: var(--frappe-primary-dark); }
+.btn-secondary { background: #fff; color: var(--frappe-text); border-color: var(--frappe-border); }
+.btn-secondary:hover { background: var(--frappe-grey-bg); }
+.btn-success { background: var(--frappe-green); color: #fff; }
+.btn-sm { padding: 4px 10px; font-size: 11px; }
+
+/* List view */
+.list-header { background: #fff; padding: 16px 24px; border-bottom: 1px solid var(--frappe-border-light); display: flex; align-items: center; gap: 12px; }
+.list-header h1 { font-size: 18px; font-weight: 600; }
+.list-header .count { color: var(--frappe-text-muted); font-size: 13px; font-weight: 400; }
+.list-filters { background: #fff; padding: 10px 24px; border-bottom: 1px solid var(--frappe-border-light); display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.list-filter { padding: 5px 10px; border: 1px solid var(--frappe-border-light); border-radius: 6px; font-size: 12px; color: var(--frappe-text-muted); background: #fff; cursor: pointer; }
+.list-filter.active-filter { border-color: var(--frappe-primary); color: var(--frappe-primary); background: var(--frappe-blue-bg); }
+.list-filter:hover { border-color: var(--frappe-primary); }
+.list-table { width: 100%; background: #fff; }
+.list-table th { text-align: left; padding: 10px 16px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; color: var(--frappe-text-muted); background: var(--frappe-grey-bg); border-bottom: 1px solid var(--frappe-border-light); }
+.list-table td { padding: 10px 16px; border-bottom: 1px solid var(--frappe-border-light); font-size: 13px; }
+.list-table tr:hover td { background: #f8fafc; }
+.list-table .title-cell { font-weight: 600; color: var(--frappe-primary); cursor: pointer; }
+.list-table .title-cell:hover { text-decoration: underline; }
+.list-table .thumb { width: 40px; height: 40px; border-radius: 6px; background: var(--frappe-grey-bg); display: flex; align-items: center; justify-content: center; font-size: 18px; color: var(--frappe-text-light); }
+.indicator { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 6px; }
+.ind-grey { background: #9ca3af; } .ind-blue { background: var(--frappe-primary); } .ind-green { background: var(--frappe-green); }
+.list-pagination { padding: 12px 24px; background: #fff; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid var(--frappe-border-light); font-size: 12px; color: var(--frappe-text-muted); }
+
+/* Grant tab */
+.stories-tab-content { padding: 24px; }
+.stories-summary { display: flex; gap: 16px; margin-bottom: 20px; }
+.stories-stat { background: #fff; border: 1px solid var(--frappe-border-light); border-radius: 8px; padding: 16px 20px; flex: 1; text-align: center; }
+.stories-stat .num { font-size: 24px; font-weight: 700; color: var(--frappe-text); }
+.stories-stat .label { font-size: 11px; color: var(--frappe-text-muted); text-transform: uppercase; letter-spacing: 0.3px; margin-top: 2px; }
+.stories-list-card { background: #fff; border: 1px solid var(--frappe-border-light); border-radius: 8px; overflow: hidden; }
+.stories-list-card .card-header { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border-bottom: 1px solid var(--frappe-border-light); background: var(--frappe-grey-bg); }
+.stories-list-card .card-header h3 { font-size: 13px; font-weight: 600; }
+.story-row { display: flex; align-items: center; padding: 12px 16px; gap: 12px; border-bottom: 1px solid var(--frappe-border-light); cursor: pointer; }
+.story-row:last-child { border-bottom: none; }
+.story-row:hover { background: #f8fafc; }
+.story-row .story-thumb { width: 48px; height: 48px; border-radius: 6px; background: var(--frappe-grey-bg); display: flex; align-items: center; justify-content: center; font-size: 20px; color: var(--frappe-text-light); flex-shrink: 0; }
+.story-row .story-info { flex: 1; }
+.story-row .story-info .story-title { font-weight: 600; font-size: 13px; color: var(--frappe-text); }
+.story-row .story-info .story-meta { font-size: 11px; color: var(--frappe-text-muted); margin-top: 2px; }
+
+/* Curation panel */
+.curation-panel { background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 16px; margin-bottom: 16px; }
+.curation-panel h4 { font-size: 12px; font-weight: 700; color: #92400e; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.3px; }
+
+/* Activity timeline */
+.timeline-item { display: flex; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--frappe-border-light); }
+.timeline-item:last-child { border-bottom: none; }
+.timeline-dot { width: 8px; height: 8px; border-radius: 50%; margin-top: 5px; flex-shrink: 0; }
+.timeline-content { flex: 1; }
+.timeline-content .who { font-weight: 600; font-size: 12px; }
+.timeline-content .what { font-size: 12px; color: var(--frappe-text-muted); }
+.timeline-content .when { font-size: 11px; color: var(--frappe-text-light); margin-top: 2px; }
+.comment-box { display: flex; gap: 8px; margin-top: 16px; }
+.comment-box input { flex: 1; padding: 8px 12px; border: 1px solid var(--frappe-border-light); border-radius: 6px; font-size: 13px; }
+
+/* Annotation */
+.screen-annotation { background: #1e293b; color: #94a3b8; padding: 16px 24px; font-size: 13px; border-radius: 0 0 12px 12px; line-height: 1.6; }
+.screen-annotation strong { color: #e2e8f0; }
+.screen-annotation code { background: #334155; padding: 1px 6px; border-radius: 3px; font-size: 12px; color: #67e8f9; }
+
+/* Cross-NGO callout */
+.ngo-visibility-banner { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 10px 16px; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; font-size: 12px; color: #1e40af; }
+
+@media (max-width: 900px) {
+  .frappe-sidebar { display: none; }
+  .nav-btn { padding: 6px 10px; font-size: 11px; }
+  .form-row { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- Navigation -->
+<div class="wireframe-nav">
+  <div class="logo">m<span>Grant</span> Wireframes</div>
+  <span class="nav-label">Screens:</span>
+  <button class="nav-btn active" onclick="showScreen('form', this)">Story Form</button>
+  <button class="nav-btn" onclick="showScreen('grant-tab', this)">Grant Tab</button>
+  <button class="nav-btn" onclick="showScreen('hub', this)">Central Hub</button>
+  <button class="nav-btn" onclick="showScreen('curation', this)">Comms Curation</button>
+</div>
+
+<div class="screen-wrap">
+
+<!-- ==================== SCREEN 1: STORY FORM ==================== -->
+<div id="screen-form" class="screen active">
+  <div class="frappe-chrome">
+    <div class="frappe-topbar">
+      <div class="breadcrumb"><a onclick="showScreen('hub',document.querySelectorAll('.nav-btn')[2])">Stories of Change</a> <span class="sep" style="color:var(--frappe-text-light)">/</span> SOC-2026-0003</div>
+      <div class="spacer"></div>
+      <div class="search-box">Search or type a command</div>
+      <div class="avatar">SN</div>
+    </div>
+    <div class="frappe-body">
+      <div class="frappe-sidebar">
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">mGrant</div>
+          <div class="sidebar-item"><span class="icon">📊</span> Dashboard</div>
+          <div class="sidebar-item"><span class="icon">📋</span> Projects</div>
+          <div class="sidebar-item"><span class="icon">💰</span> Grants</div>
+          <div class="sidebar-item"><span class="icon">🏢</span> NGOs</div>
+          <div class="sidebar-item"><span class="icon">📄</span> Document Registry</div>
+          <div class="sidebar-item active"><span class="icon">✨</span> Stories of Change <span class="badge-count">12</span></div>
+          <div class="sidebar-item"><span class="icon">📁</span> Field Visits</div>
+        </div>
+      </div>
+      <div class="frappe-main">
+        <div class="form-header">
+          <h1>Sunita's Journey to Financial Independence</h1>
+          <span class="status-badge status-draft">Draft</span>
+          <button class="btn btn-secondary btn-sm">Ctrl+S</button>
+          <button class="btn btn-primary btn-sm">Submit</button>
+        </div>
+        <div class="form-tabs" data-tabgroup="form1">
+          <div class="form-tab active" onclick="switchTab('form1','story',this)">Story</div>
+          <div class="form-tab" onclick="switchTab('form1','curation-preview',this)">Curation</div>
+          <div class="form-tab" onclick="switchTab('form1','activity',this)">Activity</div>
+        </div>
+        <div class="form-body">
+          <!-- TAB: Story -->
+          <div class="tab-content active" data-tabgroup="form1" data-tab="story">
+            <div class="form-section">
+              <div class="form-section-title">Story Details</div>
+              <div class="form-row">
+                <div class="form-field"><label>Title <span class="req">*</span></label><input type="text" class="form-input" value="Sunita's Journey to Financial Independence"></div>
+                <div class="form-field"><label>Grant <span class="req">*</span></label><input type="text" class="form-input" value="P-987YGHY · Sunfire Foundation - Year 1"></div>
+              </div>
+              <div class="form-row">
+                <div class="form-field"><label>Story Date <span class="req">*</span></label><input type="text" class="form-input" value="12-03-2026"></div>
+                <div class="form-field"><label>Status</label><input type="text" class="form-input select readonly" value="Draft" readonly></div>
+              </div>
+              <div class="form-row">
+                <div class="form-field"><label>NGO</label><input type="text" class="form-input readonly" value="NGO-0027 · Sunfire Foundation" readonly></div>
+                <div class="form-field"><label>Donor</label><input type="text" class="form-input readonly" value="D-0001 · LIC HFL" readonly></div>
+              </div>
+            </div>
+
+            <div class="form-section">
+              <div class="form-section-title">Narrative <span class="req">*</span></div>
+              <div class="rich-editor">
+                <div class="rich-editor-toolbar">
+                  <span class="tb">B</span><span class="tb"><em>I</em></span><span class="tb"><u>U</u></span>
+                  <span class="tb">H₁</span><span class="tb">H₂</span>
+                  <span class="tb" style="font-weight:400">•</span><span class="tb" style="font-weight:400">1.</span>
+                  <span class="tb">🔗</span><span class="tb">📷</span>
+                </div>
+                <div class="rich-editor-body">
+                  <p>Sunita Devi, a 34-year-old mother of two from Dharampur village, was among the first cohort of women to join our Self-Help Group programme in January 2025.</p><br>
+                  <p>Before the programme, Sunita's family survived on seasonal agricultural income of approximately ₹4,000 per month. Through the SHG, she received micro-enterprise training and a seed loan of ₹15,000 to start a small tailoring business...</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-section">
+              <div class="form-section-title">▸ Beneficiary Details</div>
+              <div class="form-row">
+                <div class="form-field"><label>Beneficiary Name</label><input type="text" class="form-input" value="Sunita Devi"></div>
+                <div class="form-field"><label>Beneficiary Location</label><input type="text" class="form-input" value="Dharampur, Solan District"></div>
+              </div>
+              <div class="form-row">
+                <div class="form-field"><label>Beneficiary Quote</label><textarea class="form-input" style="min-height:60px">"The tailoring business has changed everything. My children can now go to a better school."</textarea></div>
+                <div class="form-field">
+                  <div style="margin-top:16px">
+                    <div class="checkbox-field">
+                      <input type="checkbox" checked>
+                      <span class="cb-label">I confirm that the beneficiary has consented to this story and associated media being used by the communications team for reports, publications, and other communications.</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-section">
+              <div class="form-section-title">Cover Image</div>
+              <div style="display:grid;grid-template-columns:200px 1fr;gap:16px;">
+                <div style="width:200px;height:140px;border-radius:8px;background:linear-gradient(135deg,#fde68a,#fbbf24);display:flex;align-items:center;justify-content:center;font-size:48px;">👩‍🔧</div>
+                <div class="image-upload"><div style="font-size:28px;margin-bottom:8px">📷</div><p style="font-size:12px">Drag & drop or <span style="color:var(--frappe-primary)">browse</span></p><p style="color:var(--frappe-text-light);font-size:11px;margin-top:4px">Recommended: 1200×800px</p></div>
+              </div>
+            </div>
+
+            <div class="form-section">
+              <div class="form-section-title">Media Gallery</div>
+              <table class="child-table">
+                <thead><tr><th style="width:30px">#</th><th style="width:120px">Media Type</th><th>File</th><th>Video URL</th><th>Caption</th></tr></thead>
+                <tbody>
+                  <tr><td>1</td><td>Photo</td><td><span class="file-pill">📎 sunita_workshop.jpg</span></td><td style="color:var(--frappe-text-light)">—</td><td>Sunita at the tailoring workshop</td></tr>
+                  <tr><td>2</td><td>Video</td><td><span class="file-pill">📎 testimonial.mp4</span></td><td style="font-size:12px;color:var(--frappe-primary)">youtu.be/abc123</td><td>Video testimonial</td></tr>
+                  <tr><td>3</td><td>Photo</td><td><span class="file-pill">📎 shg_meeting.jpg</span></td><td style="color:var(--frappe-text-light)">—</td><td>SHG group meeting</td></tr>
+                  <tr><td colspan="5" class="add-row">+ Add Row</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="form-section">
+              <div class="form-section-title">▸ Classification</div>
+              <div class="form-row">
+                <div class="form-field"><label>Theme</label><input type="text" class="form-input" value="Livelihood & Enterprise"></div>
+                <div class="form-field"><label>Story Type</label><input type="text" class="form-input select" value="Beneficiary Story"></div>
+              </div>
+              <div class="form-row">
+                <div class="form-field"><label>State</label><input type="text" class="form-input" value="Himachal Pradesh"></div>
+                <div class="form-field"><label>District</label><input type="text" class="form-input" value="Solan"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB: Curation (read-only for NGO) -->
+          <div class="tab-content" data-tabgroup="form1" data-tab="curation-preview">
+            <div style="background:var(--frappe-grey-bg);border:1px solid var(--frappe-border-light);border-radius:8px;padding:24px;text-align:center;color:var(--frappe-text-muted);">
+              <div style="font-size:32px;margin-bottom:8px;opacity:0.4;">🔒</div>
+              <p style="font-size:14px;font-weight:500;">Curation is managed by the Communications team</p>
+              <p style="font-size:12px;margin-top:4px;">Once your story is submitted, the comms team can mark it as Featured and track its usage in reports and publications. You'll be able to see the curation status here (read-only).</p>
+            </div>
+            <div style="margin-top:24px;">
+              <div class="form-row">
+                <div class="form-field"><label>Featured</label><input type="text" class="form-input readonly" value="Not yet" readonly></div>
+                <div class="form-field"><label>Used In</label><input type="text" class="form-input readonly" value="—" readonly></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB: Activity -->
+          <div class="tab-content" data-tabgroup="form1" data-tab="activity">
+            <div class="form-section">
+              <div class="form-section-title">Activity Timeline</div>
+              <div class="comment-box">
+                <div class="avatar" style="width:32px;height:32px;font-size:11px;flex-shrink:0;">SN</div>
+                <input type="text" placeholder="Add a comment..." style="flex:1;padding:8px 12px;border:1px solid var(--frappe-border-light);border-radius:6px;font-size:13px;">
+                <button class="btn btn-primary btn-sm">Comment</button>
+              </div>
+              <div style="margin-top:20px;">
+                <div class="timeline-item">
+                  <div class="timeline-dot" style="background:var(--frappe-primary);"></div>
+                  <div class="timeline-content">
+                    <span class="who">Sunfire NGO Admin</span> <span class="what">created this story</span>
+                    <div class="when">16 Apr 2026, 2:30 PM</div>
+                  </div>
+                </div>
+                <div class="timeline-item">
+                  <div class="timeline-dot" style="background:var(--frappe-orange);"></div>
+                  <div class="timeline-content">
+                    <span class="who">Sunfire NGO Admin</span> <span class="what">changed Status from <strong>Draft</strong> to <strong>Draft</strong></span>
+                    <div class="when">16 Apr 2026, 2:35 PM — saved with 3 media files attached</div>
+                  </div>
+                </div>
+                <div class="timeline-item">
+                  <div class="timeline-dot" style="background:#e5e7eb;"></div>
+                  <div class="timeline-content">
+                    <span class="who">System</span> <span class="what">auto-fetched NGO, Donor, Project from Grant P-987YGHY</span>
+                    <div class="when">16 Apr 2026, 2:30 PM</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="screen-annotation">
+    <strong>Screen 1: Story of Change Form (NGO / PM view)</strong> — Three clickable tabs: <strong>Story</strong> (main form with narrative, media, beneficiary, classification), <strong>Curation</strong> (read-only for NGOs — shows whether story is featured and where it's been used), <strong>Activity</strong> (standard Frappe timeline — comments, edit history, system events). The consent checkbox is mandatory before submitting. <code>Grant</code>, <code>NGO</code>, <code>Donor</code> are auto-fetched.
+  </div>
+</div>
+
+<!-- ==================== SCREEN 2: GRANT TAB ==================== -->
+<div id="screen-grant-tab" class="screen">
+  <div class="frappe-chrome">
+    <div class="frappe-topbar">
+      <div class="breadcrumb"><a>Grant</a> <span class="sep" style="color:var(--frappe-text-light)">/</span> P-987YGHY · Sunfire Foundation - Year 1</div>
+      <div class="spacer"></div>
+      <div class="search-box">Search or type a command</div>
+      <div class="avatar">SN</div>
+    </div>
+    <div class="frappe-body">
+      <div class="frappe-sidebar">
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">mGrant</div>
+          <div class="sidebar-item"><span class="icon">📊</span> Dashboard</div>
+          <div class="sidebar-item"><span class="icon">📋</span> Projects</div>
+          <div class="sidebar-item active"><span class="icon">💰</span> Grants</div>
+          <div class="sidebar-item"><span class="icon">🏢</span> NGOs</div>
+          <div class="sidebar-item"><span class="icon">📄</span> Document Registry</div>
+          <div class="sidebar-item"><span class="icon">✨</span> Stories of Change</div>
+        </div>
+      </div>
+      <div class="frappe-main">
+        <div class="form-header">
+          <h1>Sunfire Foundation - Year 1</h1>
+          <span class="status-badge" style="background:#dcfce7;color:#166534">Active</span>
+        </div>
+        <div class="form-tabs" data-tabgroup="grant1">
+          <div class="form-tab" onclick="switchTab('grant1','details',this)">Details</div>
+          <div class="form-tab" onclick="switchTab('grant1','budget',this)">Budget</div>
+          <div class="form-tab" onclick="switchTab('grant1','lfa',this)">LFA</div>
+          <div class="form-tab" onclick="switchTab('grant1','monitoring',this)">Monitoring</div>
+          <div class="form-tab" onclick="switchTab('grant1','fv',this)">Field Visit</div>
+          <div class="form-tab active" onclick="switchTab('grant1','stories',this)">Stories of Change</div>
+          <div class="form-tab" onclick="switchTab('grant1','files',this)">Files</div>
+        </div>
+
+        <!-- Stories tab content -->
+        <div class="tab-content active" data-tabgroup="grant1" data-tab="stories">
+          <div class="stories-tab-content">
+            <div class="stories-summary">
+              <div class="stories-stat"><div class="num">3</div><div class="label">Total Stories</div></div>
+              <div class="stories-stat"><div class="num" style="color:var(--frappe-green)">1</div><div class="label">Featured</div></div>
+              <div class="stories-stat"><div class="num" style="color:var(--frappe-primary)">1</div><div class="label">Submitted</div></div>
+              <div class="stories-stat"><div class="num" style="color:var(--frappe-grey)">1</div><div class="label">Draft</div></div>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+              <div></div>
+              <div style="display:flex;gap:8px;">
+                <button class="btn btn-primary btn-sm">+ Add Story of Change</button>
+                <button class="btn btn-secondary btn-sm">View All in Hub →</button>
+              </div>
+            </div>
+            <div class="stories-list-card">
+              <div class="card-header"><h3>Stories from this Grant</h3><span style="font-size:12px;color:var(--frappe-text-muted)">Sorted by date ↓</span></div>
+              <div class="story-row">
+                <div class="story-thumb" style="background:linear-gradient(135deg,#fde68a,#fbbf24);">👩‍🔧</div>
+                <div class="story-info"><div class="story-title">Sunita's Journey to Financial Independence</div><div class="story-meta">12 Mar 2026 · Beneficiary Story · Sunita Devi, Dharampur</div></div>
+                <span class="status-badge status-featured" style="font-size:11px">Featured</span>
+              </div>
+              <div class="story-row">
+                <div class="story-thumb" style="background:linear-gradient(135deg,#bfdbfe,#60a5fa);">🏘️</div>
+                <div class="story-info"><div class="story-title">Community Water Project Transforms Village Access</div><div class="story-meta">28 Feb 2026 · Community Impact · Rampur village, Solan</div></div>
+                <span class="status-badge status-submitted">Submitted</span>
+              </div>
+              <div class="story-row">
+                <div class="story-thumb" style="background:var(--frappe-grey-bg);">📝</div>
+                <div class="story-info"><div class="story-title">Youth Skills Training Programme Reaches Milestone</div><div class="story-meta">15 Jan 2026 · Milestone · 3 media files</div></div>
+                <span class="status-badge status-draft">Draft</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Placeholder tabs -->
+        <div class="tab-content" data-tabgroup="grant1" data-tab="details"><div style="padding:48px;text-align:center;color:var(--frappe-text-light)">Grant Details tab (existing)</div></div>
+        <div class="tab-content" data-tabgroup="grant1" data-tab="budget"><div style="padding:48px;text-align:center;color:var(--frappe-text-light)">Budget tab (existing)</div></div>
+        <div class="tab-content" data-tabgroup="grant1" data-tab="lfa"><div style="padding:48px;text-align:center;color:var(--frappe-text-light)">LFA tab (existing)</div></div>
+        <div class="tab-content" data-tabgroup="grant1" data-tab="monitoring"><div style="padding:48px;text-align:center;color:var(--frappe-text-light)">Monitoring tab (existing)</div></div>
+        <div class="tab-content" data-tabgroup="grant1" data-tab="fv"><div style="padding:48px;text-align:center;color:var(--frappe-text-light)">Field Visit tab (existing)</div></div>
+        <div class="tab-content" data-tabgroup="grant1" data-tab="files"><div style="padding:48px;text-align:center;color:var(--frappe-text-light)">Files tab (existing)</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="screen-annotation">
+    <strong>Screen 2: Grant Form → "Stories of Change" Tab</strong> — New tab placed <strong>after Field Visit</strong>. Shows summary stats, story list with thumbnails, and two actions: <strong>"+ Add Story"</strong> (opens new Story form pre-filled with this grant) and <strong>"View All in Hub →"</strong> (opens central Stories Hub filtered to this grant). All other Grant tabs remain unchanged. Implemented via <code>Custom Tab Break</code> + <code>HTML field</code> + <code>client script</code>.
+  </div>
+</div>
+
+<!-- ==================== SCREEN 3: CENTRAL HUB ==================== -->
+<div id="screen-hub" class="screen">
+  <div class="frappe-chrome">
+    <div class="frappe-topbar">
+      <div class="breadcrumb"><a>Stories of Change</a></div>
+      <div class="spacer"></div>
+      <div class="search-box">Search or type a command</div>
+      <span style="font-size:11px;color:var(--frappe-text-muted);background:var(--frappe-green-bg);padding:3px 8px;border-radius:4px;">Role: <strong>NGO User</strong></span>
+      <div class="avatar">SF</div>
+    </div>
+    <div class="frappe-body">
+      <div class="frappe-sidebar">
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">mGrant</div>
+          <div class="sidebar-item"><span class="icon">📊</span> Dashboard</div>
+          <div class="sidebar-item"><span class="icon">📋</span> Projects</div>
+          <div class="sidebar-item"><span class="icon">💰</span> Grants</div>
+          <div class="sidebar-item"><span class="icon">🏢</span> NGOs</div>
+          <div class="sidebar-item"><span class="icon">📄</span> Document Registry</div>
+          <div class="sidebar-item active"><span class="icon">✨</span> Stories of Change <span class="badge-count">12</span></div>
+          <div class="sidebar-item"><span class="icon">📁</span> Field Visits</div>
+        </div>
+        <div class="sidebar-section" style="margin-top:16px">
+          <div class="sidebar-section-title">Quick Filters</div>
+          <div class="sidebar-item" style="font-size:12px"><span class="indicator ind-green" style="display:inline-block;width:7px;height:7px;border-radius:50%;"></span> Featured <span style="margin-left:auto;color:var(--frappe-text-light)">4</span></div>
+          <div class="sidebar-item" style="font-size:12px"><span class="indicator ind-blue" style="display:inline-block;width:7px;height:7px;border-radius:50%;"></span> Submitted <span style="margin-left:auto;color:var(--frappe-text-light)">5</span></div>
+          <div class="sidebar-item" style="font-size:12px"><span class="indicator ind-grey" style="display:inline-block;width:7px;height:7px;border-radius:50%;"></span> Draft <span style="margin-left:auto;color:var(--frappe-text-light)">3</span></div>
+        </div>
+      </div>
+      <div class="frappe-main">
+        <div class="list-header">
+          <h1>Stories of Change <span class="count">(12 stories across all NGOs)</span></h1>
+          <div style="flex:1"></div>
+          <button class="btn btn-primary btn-sm">+ Add Story of Change</button>
+        </div>
+
+        <!-- Cross-NGO visibility banner -->
+        <div style="padding:12px 24px 0;">
+          <div class="ngo-visibility-banner">
+            <span style="font-size:16px;">🌐</span>
+            <span>You're viewing stories from <strong>all NGO partners</strong>. Your own stories are highlighted. You can read and get inspired by stories from other NGOs, but can only edit your own.</span>
+          </div>
+        </div>
+
+        <div class="list-filters">
+          <span class="list-filter">NGO ▾</span>
+          <span class="list-filter">Donor ▾</span>
+          <span class="list-filter">Theme ▾</span>
+          <span class="list-filter">Story Type ▾</span>
+          <span class="list-filter">State ▾</span>
+          <span class="list-filter">Status ▾</span>
+          <span class="list-filter">Date Range ▾</span>
+          <input type="text" placeholder="Search stories..." style="margin-left:auto;padding:5px 10px;border:1px solid var(--frappe-border-light);border-radius:6px;font-size:12px;width:180px;">
+        </div>
+        <table class="list-table">
+          <thead><tr>
+            <th style="width:20px"><input type="checkbox"></th>
+            <th style="width:50px"></th>
+            <th>Title</th>
+            <th>NGO</th>
+            <th>Theme</th>
+            <th>State</th>
+            <th>Date</th>
+            <th>Status</th>
+          </tr></thead>
+          <tbody>
+            <tr style="background:#eff6ff;">
+              <td><input type="checkbox"></td>
+              <td><div class="thumb" style="background:linear-gradient(135deg,#fde68a,#fbbf24);">👩‍🔧</div></td>
+              <td class="title-cell">Sunita's Journey to Financial Independence</td>
+              <td><strong style="color:var(--frappe-primary)">Sunfire Foundation ★</strong></td>
+              <td>Livelihood</td>
+              <td>Himachal Pradesh</td>
+              <td>12 Mar 2026</td>
+              <td><span class="indicator ind-green"></span>Featured</td>
+            </tr>
+            <tr>
+              <td><input type="checkbox"></td>
+              <td><div class="thumb" style="background:linear-gradient(135deg,#bbf7d0,#4ade80);">🌱</div></td>
+              <td class="title-cell">Organic Farming Collective Doubles Income</td>
+              <td style="color:var(--frappe-text-muted)">Green Earth Trust</td>
+              <td>Agriculture</td>
+              <td>Maharashtra</td>
+              <td>08 Mar 2026</td>
+              <td><span class="indicator ind-green"></span>Featured</td>
+            </tr>
+            <tr style="background:#eff6ff;">
+              <td><input type="checkbox"></td>
+              <td><div class="thumb" style="background:linear-gradient(135deg,#bfdbfe,#60a5fa);">🏘️</div></td>
+              <td class="title-cell">Community Water Project Transforms Village Access</td>
+              <td><strong style="color:var(--frappe-primary)">Sunfire Foundation ★</strong></td>
+              <td>WASH</td>
+              <td>Himachal Pradesh</td>
+              <td>28 Feb 2026</td>
+              <td><span class="indicator ind-blue"></span>Submitted</td>
+            </tr>
+            <tr>
+              <td><input type="checkbox"></td>
+              <td><div class="thumb" style="background:linear-gradient(135deg,#e9d5ff,#a78bfa);">🎓</div></td>
+              <td class="title-cell">Digital Literacy Bridge: Rural Women Learn Computing</td>
+              <td style="color:var(--frappe-text-muted)">DigiConnect NGO</td>
+              <td>Education</td>
+              <td>Rajasthan</td>
+              <td>22 Feb 2026</td>
+              <td><span class="indicator ind-green"></span>Featured</td>
+            </tr>
+            <tr>
+              <td><input type="checkbox"></td>
+              <td><div class="thumb" style="background:linear-gradient(135deg,#fed7aa,#fb923c);">🏥</div></td>
+              <td class="title-cell">Mobile Health Camps Reach 500 Families</td>
+              <td style="color:var(--frappe-text-muted)">HealthFirst India</td>
+              <td>Health</td>
+              <td>Odisha</td>
+              <td>15 Feb 2026</td>
+              <td><span class="indicator ind-blue"></span>Submitted</td>
+            </tr>
+            <tr style="background:#eff6ff;">
+              <td><input type="checkbox"></td>
+              <td><div class="thumb" style="background:var(--frappe-grey-bg);">📝</div></td>
+              <td class="title-cell">Youth Skills Training Programme Reaches Milestone</td>
+              <td><strong style="color:var(--frappe-primary)">Sunfire Foundation ★</strong></td>
+              <td>Livelihood</td>
+              <td>Himachal Pradesh</td>
+              <td>15 Jan 2026</td>
+              <td><span class="indicator ind-grey"></span>Draft</td>
+            </tr>
+            <tr>
+              <td><input type="checkbox"></td>
+              <td><div class="thumb" style="background:linear-gradient(135deg,#fecaca,#f87171);">🌍</div></td>
+              <td class="title-cell">Watershed Management Restores 200 Hectares</td>
+              <td style="color:var(--frappe-text-muted)">EcoRestore Foundation</td>
+              <td>Environment</td>
+              <td>Karnataka</td>
+              <td>10 Jan 2026</td>
+              <td><span class="indicator ind-green"></span>Featured</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="list-pagination">
+          <span>Showing 1 - 7 of 12</span>
+          <div style="display:flex;gap:4px;">
+            <button class="btn btn-secondary btn-sm" disabled>← Prev</button>
+            <button class="btn btn-secondary btn-sm">Next →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="screen-annotation">
+    <strong>Screen 3: Central Stories Hub (NGO view — cross-NGO visibility)</strong> — NGOs can see stories from <strong>all other NGOs</strong> (read-only). Their own stories are highlighted with a blue row background and a <strong>★</strong> marker next to their NGO name. They can only <strong>edit their own</strong> stories. This enables peer learning and inspiration across the platform. The <strong>"+ Add Story"</strong> button is available here too — it opens the form where they select a grant. Comms/CSR users see the same list without the blue highlighting. Permission model: <code>read = all submitted/featured stories</code>, <code>write = own stories only (if_owner for NGO role)</code>.
+  </div>
+</div>
+
+<!-- ==================== SCREEN 4: COMMS CURATION ==================== -->
+<div id="screen-curation" class="screen">
+  <div class="frappe-chrome">
+    <div class="frappe-topbar">
+      <div class="breadcrumb"><a onclick="showScreen('hub',document.querySelectorAll('.nav-btn')[2])">Stories of Change</a> <span class="sep" style="color:var(--frappe-text-light)">/</span> SOC-2026-0003</div>
+      <div class="spacer"></div>
+      <span style="font-size:11px;color:var(--frappe-text-muted);background:var(--frappe-orange-bg);padding:3px 8px;border-radius:4px;">Role: <strong>Comms User</strong></span>
+      <div class="avatar" style="background:#7c3aed;">CM</div>
+    </div>
+    <div class="frappe-body">
+      <div class="frappe-sidebar">
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">mGrant</div>
+          <div class="sidebar-item active"><span class="icon">✨</span> Stories of Change <span class="badge-count">12</span></div>
+        </div>
+        <div class="sidebar-section" style="margin-top:16px">
+          <div class="sidebar-section-title">Quick Filters</div>
+          <div class="sidebar-item" style="font-size:12px"><span class="indicator ind-green" style="display:inline-block;width:7px;height:7px;border-radius:50%;"></span> Featured <span style="margin-left:auto;color:var(--frappe-text-light)">4</span></div>
+          <div class="sidebar-item" style="font-size:12px"><span class="indicator ind-blue" style="display:inline-block;width:7px;height:7px;border-radius:50%;"></span> Submitted <span style="margin-left:auto;color:var(--frappe-text-light)">5</span></div>
+        </div>
+      </div>
+      <div class="frappe-main">
+        <div class="form-header">
+          <h1>Sunita's Journey to Financial Independence</h1>
+          <span class="status-badge status-submitted">Submitted</span>
+          <button class="btn btn-success btn-sm">⭐ Mark as Featured</button>
+        </div>
+        <div class="form-tabs" data-tabgroup="curation1">
+          <div class="form-tab" onclick="switchTab('curation1','story-ro',this)">Story</div>
+          <div class="form-tab active" onclick="switchTab('curation1','curation-edit',this)">Curation</div>
+          <div class="form-tab" onclick="switchTab('curation1','activity-c',this)">Activity</div>
+        </div>
+        <div class="form-body">
+
+          <!-- TAB: Story (read-only for comms) -->
+          <div class="tab-content" data-tabgroup="curation1" data-tab="story-ro">
+            <div style="background:var(--frappe-orange-bg);border:1px solid #fde68a;border-radius:8px;padding:10px 16px;margin-bottom:16px;display:flex;align-items:center;gap:8px;font-size:12px;color:#92400e;">
+              <span style="font-size:16px;">🔒</span>
+              <span>This tab is <strong>read-only</strong> for Comms Users. You can view the story content but cannot edit it. Use the <strong>Curation</strong> tab to manage this story.</span>
+            </div>
+            <div style="background:#fff;border:1px solid var(--frappe-border-light);border-radius:8px;padding:20px;">
+              <div style="display:grid;grid-template-columns:200px 1fr;gap:20px;">
+                <div style="width:200px;height:140px;border-radius:8px;background:linear-gradient(135deg,#fde68a,#fbbf24);display:flex;align-items:center;justify-content:center;font-size:48px;">👩‍🔧</div>
+                <div>
+                  <h3 style="font-size:16px;margin-bottom:4px;">Sunita's Journey to Financial Independence</h3>
+                  <div style="font-size:12px;color:var(--frappe-text-muted);margin-bottom:8px;">12 Mar 2026 · Sunfire Foundation · Livelihood · Himachal Pradesh</div>
+                  <p style="font-size:13px;line-height:1.6;color:var(--frappe-text);">Sunita Devi, a 34-year-old mother of two from Dharampur village, was among the first cohort of women to join our Self-Help Group programme...</p>
+                  <div style="margin-top:8px;padding:8px 12px;background:#fffbeb;border-left:3px solid #fbbf24;border-radius:0 4px 4px 0;font-style:italic;font-size:13px;color:#92400e;">"The tailoring business has changed everything." — Sunita Devi</div>
+                </div>
+              </div>
+              <div style="margin-top:16px;display:flex;gap:8px;">
+                <div style="width:80px;height:60px;border-radius:6px;background:linear-gradient(135deg,#a7f3d0,#34d399);display:flex;align-items:center;justify-content:center;font-size:12px;color:#065f46;">📷 Photo</div>
+                <div style="width:80px;height:60px;border-radius:6px;background:linear-gradient(135deg,#c4b5fd,#8b5cf6);display:flex;align-items:center;justify-content:center;font-size:12px;color:#fff;">🎬 Video</div>
+                <div style="width:80px;height:60px;border-radius:6px;background:linear-gradient(135deg,#fecaca,#f87171);display:flex;align-items:center;justify-content:center;font-size:12px;color:#7f1d1d;">📷 Photo</div>
+              </div>
+              <div style="margin-top:8px;font-size:11px;color:var(--frappe-text-muted);">✓ Beneficiary consent obtained · 3 media files attached</div>
+            </div>
+          </div>
+
+          <!-- TAB: Curation (editable) -->
+          <div class="tab-content active" data-tabgroup="curation1" data-tab="curation-edit">
+            <div class="curation-panel">
+              <h4>✏️ Comms Curation — Editable by you</h4>
+              <div class="form-row">
+                <div class="form-field">
+                  <div class="checkbox-field">
+                    <input type="checkbox">
+                    <span class="cb-label" style="font-weight:600;font-size:13px;">⭐ Mark as Featured</span>
+                  </div>
+                  <div style="font-size:11px;color:var(--frappe-text-muted);margin-top:4px;margin-left:24px;">Featuring makes this story prominent in the Hub and available for reports.</div>
+                </div>
+                <div class="form-field">
+                  <label>Featured By</label>
+                  <input type="text" class="form-input readonly" value="(auto-filled when featured)" readonly>
+                  <div style="margin-top:8px"><label>Featured Date</label><input type="text" class="form-input readonly" value="(auto-filled when featured)" readonly></div>
+                </div>
+              </div>
+              <div class="form-row" style="margin-top:12px">
+                <div class="form-field"><label>Comms Notes</label><textarea class="form-input" placeholder="Internal notes — e.g., 'Great for annual report hero', 'Need higher-res cover image'..."></textarea></div>
+                <div class="form-field"><label>Used In</label><textarea class="form-input" placeholder="Where published — e.g., 'Annual Report 2026', 'LinkedIn 15 Mar', 'Website hero'..."></textarea></div>
+              </div>
+            </div>
+            <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:16px;">
+              <button class="btn btn-secondary">Cancel</button>
+              <button class="btn btn-primary">Save Curation</button>
+            </div>
+          </div>
+
+          <!-- TAB: Activity -->
+          <div class="tab-content" data-tabgroup="curation1" data-tab="activity-c">
+            <div class="form-section">
+              <div class="form-section-title">Activity Timeline</div>
+              <div class="comment-box">
+                <div class="avatar" style="width:32px;height:32px;font-size:11px;flex-shrink:0;background:#7c3aed;">CM</div>
+                <input type="text" placeholder="Add a comment..." style="flex:1;padding:8px 12px;border:1px solid var(--frappe-border-light);border-radius:6px;font-size:13px;">
+                <button class="btn btn-primary btn-sm">Comment</button>
+              </div>
+              <div style="margin-top:20px;">
+                <div class="timeline-item">
+                  <div class="timeline-dot" style="background:var(--frappe-green);"></div>
+                  <div class="timeline-content"><span class="who">Comms Manager</span> <span class="what">marked story as <strong>Featured</strong></span><div class="when">16 Apr 2026, 4:15 PM</div></div>
+                </div>
+                <div class="timeline-item">
+                  <div class="timeline-dot" style="background:var(--frappe-primary);"></div>
+                  <div class="timeline-content"><span class="who">Sunfire NGO Admin</span> <span class="what">changed Status from Draft to <strong>Submitted</strong></span><div class="when">16 Apr 2026, 3:00 PM</div></div>
+                </div>
+                <div class="timeline-item">
+                  <div class="timeline-dot" style="background:var(--frappe-orange);"></div>
+                  <div class="timeline-content"><span class="who">Sunfire NGO Admin</span> <span class="what">created this story</span><div class="when">16 Apr 2026, 2:30 PM</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="screen-annotation">
+    <strong>Screen 4: Comms Curation View</strong> — What the <strong>Comms User</strong> sees. Three clickable tabs: <strong>Story</strong> (read-only preview with media thumbnails and consent status), <strong>Curation</strong> (editable — featured flag, comms notes, usage tracking), <strong>Activity</strong> (full timeline with comments). The <strong>"⭐ Mark as Featured"</strong> header button is a shortcut. Comms Users cannot edit story content — only curation fields at <code>permlevel: 1</code>.
+  </div>
+</div>
+
+</div><!-- end screen-wrap -->
+
+<script>
+function showScreen(id, btn) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('screen-' + id).classList.add('active');
+  if (btn) btn.classList.add('active');
+}
+function switchTab(group, tab, el) {
+  // Deactivate all tabs and contents in this group
+  el.parentElement.querySelectorAll('.form-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll(`.tab-content[data-tabgroup="${group}"]`).forEach(c => c.classList.remove('active'));
+  // Activate clicked tab and matching content
+  el.classList.add('active');
+  const content = document.querySelector(`.tab-content[data-tabgroup="${group}"][data-tab="${tab}"]`);
+  if (content) content.classList.add('active');
+}
+</script>
+</body>
+</html>
