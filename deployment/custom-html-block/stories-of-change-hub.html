@@ -1,0 +1,83 @@
+
+<div id="stories-hub">
+  <div id="hub-header">
+    <div id="header-left">
+      <div id="hub-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+          <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+        </svg>
+      </div>
+      <div>
+        <h2 id="hub-title">Stories of Change</h2>
+        <p id="hub-subtitle">Impact stories from the field — curated by the communications team</p>
+      </div>
+    </div>
+    <button id="btn-new-story">+ New Story</button>
+  </div>
+
+  <div id="kpi-row">
+    <div class="kpi-card" id="kpi-total">
+      <span class="kpi-label">Total Stories</span>
+      <span class="kpi-value">—</span>
+    </div>
+    <div class="kpi-card" id="kpi-featured">
+      <span class="kpi-label">Featured</span>
+      <span class="kpi-value">—</span>
+    </div>
+    <div class="kpi-card" id="kpi-submitted">
+      <span class="kpi-label">Submitted</span>
+      <span class="kpi-value">—</span>
+    </div>
+    <div class="kpi-card" id="kpi-draft">
+      <span class="kpi-label">Drafts</span>
+      <span class="kpi-value">—</span>
+    </div>
+  </div>
+
+  <div id="filter-strip">
+    <div class="filter-group">
+      <label>Status</label>
+      <select id="filter-status">
+        <option value="">All Statuses</option>
+        <option value="Draft">Draft</option>
+        <option value="Submitted">Submitted</option>
+        <option value="Featured">Featured</option>
+        <option value="Archived">Archived</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label>NGO</label>
+      <select id="filter-ngo"><option value="">All NGOs</option></select>
+    </div>
+    <div class="filter-group">
+      <label>Theme</label>
+      <select id="filter-theme"><option value="">All Themes</option></select>
+    </div>
+    <div class="filter-group">
+      <label>Search</label>
+      <input type="text" id="filter-search" placeholder="Search stories..." />
+    </div>
+    <button id="btn-reset" style="display:none;">Reset</button>
+  </div>
+
+  <div id="stories-grid"></div>
+
+  <div id="empty-state" style="display:none;">
+    <div id="empty-icon">
+      <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#D1D5DB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+        <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+      </svg>
+    </div>
+    <h3 id="empty-title">No stories yet</h3>
+    <p id="empty-desc">Start capturing impact stories from the field. Stories help showcase the real change your grants are making.</p>
+    <button id="btn-empty-new">+ Create Your First Story</button>
+  </div>
+
+  <div id="loading-state">
+    <div class="shimmer-card"></div>
+    <div class="shimmer-card"></div>
+    <div class="shimmer-card"></div>
+  </div>
+</div>
