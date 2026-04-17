@@ -18,6 +18,15 @@
     clearTimeout(searchTimeout);
     searchTimeout = setTimeout(applyFilters, 300);
   });
+  // Prevent Enter key from bubbling up to Frappe's global search / form submit
+  $('#filter-search').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' || e.keyCode === 13) {
+      e.preventDefault();
+      e.stopPropagation();
+      clearTimeout(searchTimeout);
+      applyFilters();
+    }
+  });
   $('#btn-reset').addEventListener('click', function() {
     $('#filter-status').value = '';
     $('#filter-ngo').value = '';
@@ -102,7 +111,11 @@
       if (ngo && s.ngo_name !== ngo) return false;
       if (theme && s.theme !== theme) return false;
       if (search) {
-        var hay = ((s.title || '') + ' ' + (s.ngo_name || '') + ' ' + stripHtml(s.narrative || '')).toLowerCase();
+        var hay = [
+          s.title, s.ngo_name, s.grant_name, s.theme,
+          s.story_type, s.state, s.district, s.name,
+          stripHtml(s.narrative || '')
+        ].join(' ').toLowerCase();
         if (hay.indexOf(search) === -1) return false;
       }
       return true;
@@ -148,7 +161,7 @@
       doctype: 'Story of Change',
       fields: ['name', 'title', 'story_date', 'status', 'cover_image',
                'ngo_name', 'grant', 'grant_name', 'narrative', 'theme',
-               'story_type', 'state'],
+               'story_type', 'state', 'district'],
       order_by: 'creation desc',
       limit_page_length: 100
     },

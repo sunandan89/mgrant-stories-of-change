@@ -1789,7 +1789,7 @@
       "print_hide_if_no_value": 0,
       "report_hide": 0,
       "depends_on": null,
-      "collapsible": 0,
+      "collapsible": 1,
       "collapsible_depends_on": null,
       "hide_border": 0,
       "in_list_view": 0,
