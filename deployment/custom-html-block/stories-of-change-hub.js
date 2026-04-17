@@ -18,14 +18,20 @@
     clearTimeout(searchTimeout);
     searchTimeout = setTimeout(applyFilters, 300);
   });
-  // Prevent Enter key from bubbling up to Frappe's global search / form submit
-  $('#filter-search').addEventListener('keydown', function(e) {
-    if (e.key === 'Enter' || e.keyCode === 13) {
-      e.preventDefault();
+  // Stop ALL key events from bubbling out of shadow DOM —
+  // Frappe's global Awesomebar handler intercepts keystrokes when
+  // document.activeElement is the shadow host (not our inner input),
+  // redirecting typing to the navbar search. Blocking propagation
+  // on keydown/keypress/keyup keeps input inside the hub search.
+  ['keydown', 'keypress', 'keyup'].forEach(function(evt) {
+    $('#filter-search').addEventListener(evt, function(e) {
       e.stopPropagation();
-      clearTimeout(searchTimeout);
-      applyFilters();
-    }
+      if (e.type === 'keydown' && (e.key === 'Enter' || e.keyCode === 13)) {
+        e.preventDefault();
+        clearTimeout(searchTimeout);
+        applyFilters();
+      }
+    });
   });
   $('#btn-reset').addEventListener('click', function() {
     $('#filter-status').value = '';
