@@ -104,11 +104,40 @@
     });
   }
 
+  // ── Trigram fuzzy matching utilities ──
+  function trigrams(str) {
+    var t = {};
+    var s = '  ' + str.toLowerCase().replace(/\s+/g, ' ').trim() + '  ';
+    for (var i = 0; i < s.length - 2; i++) t[s.substr(i, 3)] = true;
+    return t;
+  }
+
+  function similarity(a, b) {
+    if (!a || !b) return 0;
+    var tA = trigrams(a), tB = trigrams(b);
+    var shared = 0, total = 0;
+    for (var k in tA) { total++; if (tB[k]) shared++; }
+    for (var k in tB) { if (!tA[k]) total++; }
+    return total ? shared / total : 0;
+  }
+
+  var FUZZY_THRESHOLD = 0.3;
+
+  function fuzzyMatchFields(word, fieldValues) {
+    return fieldValues.some(function(val) {
+      if (!val) return false;
+      var parts = val.toLowerCase().split(/\s+/);
+      return parts.some(function(part) {
+        return similarity(word, part) > FUZZY_THRESHOLD;
+      });
+    });
+  }
+
   function applyFilters() {
     var status = $('#filter-status').value;
     var ngo = $('#filter-ngo').value;
     var theme = $('#filter-theme').value;
-    var search = ($('#filter-search').value || '').toLowerCase();
+    var search = ($('#filter-search').value || '').toLowerCase().trim();
     var hasFilter = status || ngo || theme || search;
     $('#btn-reset').style.display = hasFilter ? '' : 'none';
 
@@ -117,12 +146,20 @@
       if (ngo && s.ngo_name !== ngo) return false;
       if (theme && s.theme !== theme) return false;
       if (search) {
-        var hay = [
+        var searchableFields = [
           s.title, s.ngo_name, s.grant_name, s.theme,
-          s.story_type, s.state, s.district, s.name,
-          stripHtml(s.narrative || '')
-        ].join(' ').toLowerCase();
-        if (hay.indexOf(search) === -1) return false;
+          s.story_type, s.state, s.district, s.name
+        ];
+        var hay = searchableFields.concat([stripHtml(s.narrative || '')])
+          .filter(Boolean).join(' ').toLowerCase();
+        var words = search.split(/\s+/);
+        var match = words.every(function(word) {
+          // Fast path: exact substring
+          if (hay.indexOf(word) !== -1) return true;
+          // Fuzzy fallback: trigram similarity against individual fields
+          return fuzzyMatchFields(word, searchableFields.filter(Boolean));
+        });
+        if (!match) return false;
       }
       return true;
     });
