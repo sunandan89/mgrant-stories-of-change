@@ -72,7 +72,7 @@
 
     stories.forEach(function(s) {
       var card = document.createElement('div');
-      card.className = 'story-card';
+      card.className = 'story-card' + (s.status === 'Featured' ? ' card-featured' : '');
 
       var imageInner = '';
       if (s.cover_image) {
