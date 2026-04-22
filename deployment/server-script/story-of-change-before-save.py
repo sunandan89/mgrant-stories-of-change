@@ -77,7 +77,7 @@ if cover_url:
 elif doc.media and len(doc.media) > 0:
     # No row marked as cover — use first image if available
     for row in doc.media:
-        if row.file and row.media_type == "Image":
+        if row.file and row.media_type in ("Image", "Photo"):
             doc.cover_image = row.file
             row.is_cover = 1
             break

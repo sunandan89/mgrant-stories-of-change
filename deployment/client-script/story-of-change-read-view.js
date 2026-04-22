@@ -84,7 +84,7 @@ function build_read_view(frm) {
     // Build media gallery (non-cover images)
     var gallery_html = '';
     var gallery_images = (doc.media || []).filter(function(m) {
-        return m.file && m.media_type === 'Image' && m.file !== cover;
+        return m.file && (m.media_type === 'Image' || m.media_type === 'Photo') && m.file !== cover;
     });
     if (gallery_images.length > 0) {
         gallery_html = '<div class="rv-gallery">' +
