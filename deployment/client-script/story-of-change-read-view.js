@@ -241,6 +241,7 @@ function get_read_view_css() {
     '.rv-status-featured { background: #DCFCE7; color: #15803D; }' +
     '.rv-status-submitted { background: #DBEAFE; color: #1D4ED8; }' +
     '.rv-status-draft { background: #F3F4F6; color: #6B7280; }' +
+    '.rv-status-approved { background: #FEF3C7; color: #B45309; }' +
     '.rv-status-archived { background: #F3F4F6; color: #9CA3AF; }' +
     '.rv-chip-ngo { background: #EDE9FE; color: #6D28D9; }' +
     '.rv-chip-theme { background: #E0F2FE; color: #0369A1; }' +
