@@ -63,3 +63,21 @@ if doc.story_date:
             "document events that have already happened.",
             title="Invalid Date"
         )
+
+# ─── 5. COVER IMAGE SYNC FROM GALLERY ──────────────────────────────────
+# If any media row is marked is_cover, sync its file to cover_image
+cover_url = None
+for row in (doc.media or []):
+    if row.is_cover and row.file:
+        cover_url = row.file
+        break
+
+if cover_url:
+    doc.cover_image = cover_url
+elif doc.media and len(doc.media) > 0:
+    # No row marked as cover — use first image if available
+    for row in doc.media:
+        if row.file and row.media_type == "Image":
+            doc.cover_image = row.file
+            row.is_cover = 1
+            break

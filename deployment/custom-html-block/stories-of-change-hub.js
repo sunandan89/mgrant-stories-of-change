@@ -167,13 +167,13 @@
   }
 
   function updateKPIs() {
-    var counts = { Draft: 0, Submitted: 0, Featured: 0, Archived: 0 };
+    var counts = { Draft: 0, Submitted: 0, Approved: 0, Featured: 0, Archived: 0 };
     allStories.forEach(function(s) {
       if (counts.hasOwnProperty(s.status)) counts[s.status]++;
     });
     $('#kpi-total .kpi-value').textContent = allStories.length;
     $('#kpi-featured .kpi-value').textContent = counts.Featured;
-    $('#kpi-submitted .kpi-value').textContent = counts.Submitted;
+    $('#kpi-submitted .kpi-value').textContent = counts.Submitted + counts.Approved;
     $('#kpi-draft .kpi-value').textContent = counts.Draft;
   }
 

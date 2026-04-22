@@ -81,6 +81,24 @@ function build_read_view(frm) {
         attribution_html = '<div class="rv-attribution">' + parts.join(' &middot; ') + '</div>';
     }
 
+    // Build media gallery (non-cover images)
+    var gallery_html = '';
+    var gallery_images = (doc.media || []).filter(function(m) {
+        return m.file && m.media_type === 'Image' && m.file !== cover;
+    });
+    if (gallery_images.length > 0) {
+        gallery_html = '<div class="rv-gallery">' +
+            '<h3 class="rv-gallery-title">Gallery</h3>' +
+            '<div class="rv-gallery-grid">';
+        gallery_images.forEach(function(m) {
+            gallery_html += '<div class="rv-gallery-item">' +
+                '<img src="' + m.file + '" alt="' + (m.caption || '') + '" />' +
+                (m.caption ? '<p class="rv-gallery-caption">' + m.caption + '</p>' : '') +
+                '</div>';
+        });
+        gallery_html += '</div></div>';
+    }
+
     // Build the full read-view
     var html = '<div class="soc-read-view">' +
         '<style>' + get_read_view_css() + '</style>' +
@@ -116,6 +134,7 @@ function build_read_view(frm) {
             attribution_html +
             '<div class="rv-narrative">' + narrative + '</div>' +
             beneficiary_html +
+            gallery_html +
         '</article>' +
     '</div>';
 
@@ -298,6 +317,41 @@ function get_read_view_css() {
     '  color: #B45309;' +
     '  font-weight: 600;' +
     '  margin: 12px 0 0 0;' +
+    '}' +
+
+    /* Gallery */
+    '.rv-gallery {' +
+    '  margin-top: 36px;' +
+    '  padding-top: 24px;' +
+    '  border-top: 1px solid #E5E7EB;' +
+    '}' +
+    '.rv-gallery-title {' +
+    '  font-size: 18px;' +
+    '  font-weight: 700;' +
+    '  color: #374151;' +
+    '  margin: 0 0 16px 0;' +
+    '}' +
+    '.rv-gallery-grid {' +
+    '  display: grid;' +
+    '  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));' +
+    '  gap: 12px;' +
+    '}' +
+    '.rv-gallery-item img {' +
+    '  width: 100%;' +
+    '  height: 180px;' +
+    '  object-fit: cover;' +
+    '  border-radius: 8px;' +
+    '  cursor: pointer;' +
+    '  transition: transform 0.15s ease;' +
+    '}' +
+    '.rv-gallery-item img:hover {' +
+    '  transform: scale(1.02);' +
+    '}' +
+    '.rv-gallery-caption {' +
+    '  font-size: 12px;' +
+    '  color: #6B7280;' +
+    '  margin: 6px 0 0;' +
+    '  text-align: center;' +
     '}' +
     '';
 }
