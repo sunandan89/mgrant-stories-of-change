@@ -1,28 +1,21 @@
-// Client Script: Story of Change — Workflow
+// Client Script: Story of Change — Form Logic
 // Type: Form
 // Reference DocType: Story of Change
 //
-// Handles:
-// 1. "Feature This Story" button on Curation tab (Approved stories, comms roles only)
-// 2. Status dropdown restricted to valid transitions
-// 3. Auto-fetch theme, state, district from Grant profile
-// 4. story_type mandatory + consent logic for Beneficiary type
-// 5. Role-based Curation tab visibility
+// Handles (business rules only — workflow transitions are handled by Frappe Workflow):
+// 1. Auto-fetch theme, state, district from Grant profile
+// 2. story_type mandatory + consent logic for Beneficiary type
+// 3. Curation tab visibility (hide for non-comms roles)
+//
+// NOTE: Status transitions (Draft→Submitted→Approved→Featured→Archived) and
+// role-gated action buttons are handled by the native "Story of Change Workflow"
+// Workflow document. Do NOT add custom transition logic here.
 
-// ─── VALID TRANSITIONS (mirrors Server Script) ────────────────────────
-var TRANSITIONS = {
-    'Draft':     ['Submitted'],
-    'Submitted': ['Approved', 'Draft'],
-    'Approved':  ['Featured', 'Archived', 'Submitted'],
-    'Featured':  ['Approved', 'Archived'],
-    'Archived':  ['Draft']
-};
+// Roles that can see the Curation tab
+var CURATION_ROLES = ['PM', 'SPM', 'CSR & ESG JGM', 'Comms User', 'System Manager'];
 
-// Roles that can approve / feature stories
-var COMMS_ROLES = ['PM', 'SPM', 'CSR & ESG JGM', 'System Manager'];
-
-function has_comms_role() {
-    return COMMS_ROLES.some(function(role) {
+function has_curation_role() {
+    return CURATION_ROLES.some(function(role) {
         return frappe.user_roles.indexOf(role) !== -1;
     });
 }
@@ -33,28 +26,12 @@ frappe.ui.form.on('Story of Change', {
         // Make story_type mandatory in UI
         frm.set_df_property('story_type', 'reqd', 1);
 
-        // Restrict status options to valid transitions
-        restrict_status_options(frm);
-
-        // Feature button on Curation tab
-        setup_feature_button(frm);
-
-        // Un-Feature button for Featured stories
-        setup_unfeature_button(frm);
-
         // Consent indicator
         update_consent_requirement(frm);
 
         // Role-based: hide Curation tab for non-comms roles
-        if (!has_comms_role()) {
-            var curationTab = null;
+        if (!has_curation_role()) {
             if (frm.layout && frm.layout.tabs) {
-                frm.layout.tabs.forEach(function(t) {
-                    if (t.df.fieldname === 'tab_curation') curationTab = t;
-                });
-            }
-            if (curationTab && curationTab.wrapper) {
-                // Hide the tab header itself
                 frm.layout.tabs.forEach(function(t) {
                     if (t.df.fieldname === 'tab_curation' && t.tab_link) {
                         $(t.tab_link).hide();
@@ -84,65 +61,7 @@ frappe.ui.form.on('Story of Change', {
 });
 
 
-// ─── 1. FEATURE THIS STORY BUTTON ─────────────────────────────────────
-function setup_feature_button(frm) {
-    if (frm.is_new()) return;
-    if (frm.doc.status !== 'Approved') return;
-    if (!has_comms_role()) return;
-
-    frm.add_custom_button('Feature This Story', function() {
-        frappe.confirm(
-            'Mark this story as <strong>Featured</strong>?<br><br>' +
-            'This will set you as the curator and record today\'s date.',
-            function() {
-                frm.set_value('status', 'Featured');
-                frm.save();
-            }
-        );
-    }, 'Actions');
-
-    // Style the button
-    frm.change_custom_button_type('Feature This Story', 'Actions', 'primary');
-}
-
-function setup_unfeature_button(frm) {
-    if (frm.is_new()) return;
-    if (frm.doc.status !== 'Featured') return;
-    if (!has_comms_role()) return;
-
-    frm.add_custom_button('Remove from Featured', function() {
-        frappe.confirm(
-            'Move this story back to <strong>Approved</strong>?<br><br>' +
-            'The Featured badge, curator, and date will be cleared.',
-            function() {
-                frm.set_value('status', 'Approved');
-                frm.save();
-            }
-        );
-    }, 'Actions');
-}
-
-
-// ─── 2. STATUS DROPDOWN RESTRICTION ───────────────────────────────────
-function restrict_status_options(frm) {
-    var current = frm.doc.status || 'Draft';
-    var allowed = TRANSITIONS[current] || [];
-
-    // Always include the current status in the list
-    var options = [current].concat(allowed);
-
-    // Non-comms roles cannot move to Approved or Featured
-    if (!has_comms_role()) {
-        options = options.filter(function(s) {
-            return s !== 'Approved' && s !== 'Featured';
-        });
-    }
-
-    frm.set_df_property('status', 'options', options.join('\n'));
-}
-
-
-// ─── 3. AUTO-FETCH FROM GRANT ──────────────────────────────────────────
+// ─── 1. AUTO-FETCH FROM GRANT ──────────────────────────────────────────
 function auto_fetch_from_grant(frm) {
     frappe.call({
         method: 'frappe.client.get',
@@ -204,7 +123,7 @@ function load_district_options(frm) {
 }
 
 
-// ─── 4. CONSENT REQUIREMENT ───────────────────────────────────────────
+// ─── 2. CONSENT REQUIREMENT ───────────────────────────────────────────
 function update_consent_requirement(frm) {
     var is_beneficiary = frm.doc.story_type === 'Beneficiary Story';
 

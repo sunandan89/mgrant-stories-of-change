@@ -2,32 +2,21 @@
 # Type: DocType Event (Before Save)
 # Reference DocType: Story of Change
 #
-# Handles:
-# 1. Status transition validation (Draft→Submitted→Approved→Featured→Archived)
-# 2. Featured sync — auto-fill/clear featured_by, featured_date, is_featured
-# 3. Consent validation — required only when story_type is "Beneficiary Story"
-# 4. Future date block — story_date cannot be in the future
+# Handles (business rules only — transition validation is handled by Frappe Workflow):
+# 1. Featured sync — auto-fill/clear featured_by, featured_date, is_featured
+# 2. Consent validation — required only when story_type is "Beneficiary Story"
+# 3. Future date block — story_date cannot be in the future
+# 4. Cover image sync from media gallery
+#
+# NOTE: Status transitions (Draft→Submitted→Approved→Featured→Archived) and
+# role-gated actions are handled by the native "Story of Change Workflow"
+# Workflow document. Do NOT add custom transition logic here.
 
-# ─── 1. STATUS TRANSITION RULES ────────────────────────────────────────
-VALID_TRANSITIONS = {
-    "Draft":     ["Submitted"],
-    "Submitted": ["Approved", "Draft"],
-    "Approved":  ["Featured", "Archived", "Submitted"],
-    "Featured":  ["Approved", "Archived"],
-    "Archived":  ["Draft"],
-}
+# ─── 1. FEATURED SYNC ──────────────────────────────────────────────────
+# Use workflow_state since Frappe Workflow is active
+current_status = doc.workflow_state or doc.status or "Draft"
 
-old_doc = doc.get_doc_before_save()
-old_status = old_doc.status if old_doc else "Draft"
-
-if old_doc and doc.status != old_status:
-    allowed = VALID_TRANSITIONS.get(old_status, [])
-    if doc.status not in allowed:
-        msg = "Cannot move from '" + old_status + "' to '" + doc.status + "'. Allowed: " + (", ".join(allowed) if allowed else "none") + "."
-        frappe.throw(msg, title="Invalid Status Transition")
-
-# ─── 2. FEATURED SYNC ──────────────────────────────────────────────────
-if doc.status == "Featured":
+if current_status == "Featured":
     doc.is_featured = 1
     if not doc.featured_by:
         doc.featured_by = frappe.session.user
@@ -38,7 +27,7 @@ else:
     doc.featured_by = None
     doc.featured_date = None
 
-# ─── 3. CONSENT VALIDATION ─────────────────────────────────────────────
+# ─── 2. CONSENT VALIDATION ─────────────────────────────────────────────
 if doc.story_type == "Beneficiary Story":
     has_beneficiary_data = any([
         doc.beneficiary_name,
@@ -53,7 +42,7 @@ if doc.story_type == "Beneficiary Story":
             title="Consent Required"
         )
 
-# ─── 4. FUTURE DATE BLOCK ──────────────────────────────────────────────
+# ─── 3. FUTURE DATE BLOCK ──────────────────────────────────────────────
 if doc.story_date:
     story_dt = frappe.utils.getdate(doc.story_date)
     today_dt = frappe.utils.getdate(frappe.utils.today())
@@ -64,7 +53,7 @@ if doc.story_date:
             title="Invalid Date"
         )
 
-# ─── 5. COVER IMAGE SYNC FROM GALLERY ──────────────────────────────────
+# ─── 4. COVER IMAGE SYNC FROM GALLERY ──────────────────────────────────
 # If any media row is marked is_cover, sync its file to cover_image
 cover_url = None
 for row in (doc.media or []):
