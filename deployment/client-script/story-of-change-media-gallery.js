@@ -80,10 +80,10 @@ function setup_multi_upload(frm) {
 
     // Find the media gallery section
     var section = frm.fields_dict.section_media_gallery;
-    if (!section || !section.$wrapper) return;
+    if (!section || !section.wrapper) return;
 
     // Don't add twice
-    if (section.$wrapper.find('.soc-multi-upload-btn').length) return;
+    if (section.wrapper.find('.soc-multi-upload-btn').length) return;
 
     var $btn = $('<button class="btn btn-xs btn-default soc-multi-upload-btn" ' +
         'style="margin: 8px 0 4px 0;">' +
@@ -158,5 +158,5 @@ function setup_multi_upload(frm) {
         $input.trigger('click');
     });
 
-    section.$wrapper.find('.section-head').after($btn);
+    section.wrapper.find('.section-head').after($btn);
 }
