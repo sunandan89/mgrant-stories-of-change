@@ -39,11 +39,23 @@ frappe.ui.form.on('Story of Change', {
                 });
             }
         }
+
+        // Set theme query filter based on grant's themes
+        if (frm.doc.grant && frm._grant_themes && frm._grant_themes.length) {
+            frm.set_query('theme', function() {
+                return { filters: { name: ['in', frm._grant_themes] } };
+            });
+        }
     },
 
     grant: function(frm) {
         if (frm.doc.grant) {
             auto_fetch_from_grant(frm);
+        } else {
+            // Clear cached grant data
+            frm._grant_themes = null;
+            frm._grant_states = null;
+            frm._grant_districts = null;
         }
     },
 
@@ -53,10 +65,7 @@ frappe.ui.form.on('Story of Change', {
 
     state: function(frm) {
         // When state changes, clear district so user picks fresh
-        if (frm.doc.grant) {
-            frm.set_value('district', '');
-            load_district_options(frm);
-        }
+        frm.set_value('district', '');
     }
 });
 
@@ -70,60 +79,57 @@ function auto_fetch_from_grant(frm) {
             if (!r.message) return;
             var grant = r.message;
 
-            // Auto-fill theme (Focus Area) if empty
-            if (grant.focus_area && !frm.doc.theme) {
-                frm.set_value('theme', grant.focus_area);
-            }
+            // ── Theme: read from custom_project_theme child table ──
+            var themes = (grant.custom_project_theme || []).map(function(row) {
+                return row.theme;
+            }).filter(Boolean);
 
-            // Extract unique states from geography_details
-            var geo = grant.geography_details || [];
-            if (geo.length > 0) {
-                var states = [];
-                var seen = {};
-                geo.forEach(function(g) {
-                    if (g.state_name && !seen[g.state_name]) {
-                        seen[g.state_name] = true;
-                        states.push(g.state_name);
-                    }
+            // Cache for query filter
+            frm._grant_themes = themes;
+
+            // Set dropdown filter to only show grant's themes
+            if (themes.length > 0) {
+                frm.set_query('theme', function() {
+                    return { filters: { name: ['in', themes] } };
                 });
+            }
 
-                // Auto-fill state if only one and field is empty
-                if (states.length === 1 && !frm.doc.state) {
-                    frm.set_value('state', states[0]);
-                }
+            // Auto-fill if exactly one theme and field is empty
+            if (themes.length === 1 && !frm.doc.theme) {
+                frm.set_value('theme', themes[0]);
+            }
 
-                // Store for district lookup
-                frm._grant_geo = geo;
+            // ── State: read from states Table MultiSelect ──
+            var states = (grant.states || []).map(function(row) {
+                return row.state;
+            }).filter(Boolean);
 
-                // Load district options if state is set
-                if (frm.doc.state) {
-                    load_district_options(frm);
-                }
+            // Cache for reference
+            frm._grant_states = states;
+
+            // Auto-fill if exactly one state and field is empty
+            if (states.length === 1 && !frm.doc.state) {
+                frm.set_value('state', states[0]);
+            }
+
+            // ── District: read from districts Table MultiSelect ──
+            var districts = (grant.districts || []).map(function(row) {
+                return row.district;
+            }).filter(Boolean);
+
+            // Cache for reference
+            frm._grant_districts = districts;
+
+            // Auto-fill if exactly one district and field is empty
+            if (districts.length === 1 && !frm.doc.district) {
+                frm.set_value('district', districts[0]);
             }
         }
     });
 }
 
-function load_district_options(frm) {
-    if (!frm._grant_geo || !frm.doc.state) return;
 
-    var districts = [];
-    var seen = {};
-    frm._grant_geo.forEach(function(g) {
-        if (g.state_name === frm.doc.state && g.district_name && !seen[g.district_name]) {
-            seen[g.district_name] = true;
-            districts.push(g.district_name);
-        }
-    });
-
-    // Auto-fill district if only one and field is empty
-    if (districts.length === 1 && !frm.doc.district) {
-        frm.set_value('district', districts[0]);
-    }
-}
-
-
-// ─── 2. CONSENT REQUIREMENT ───────────────────────────────────────────
+// ─── 2. CONSENT REQUIREMENT ───────────────────────────────────────
 function update_consent_requirement(frm) {
     var is_beneficiary = frm.doc.story_type === 'Beneficiary Story';
 
