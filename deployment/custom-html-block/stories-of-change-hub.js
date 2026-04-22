@@ -205,6 +205,7 @@
       fields: ['name', 'title', 'story_date', 'status', 'cover_image',
                'ngo_name', 'grant', 'grant_name', 'narrative', 'theme',
                'story_type', 'state', 'district'],
+      filters: [['status', '!=', 'Archived']],
       order_by: 'creation desc',
       limit_page_length: 100
     },

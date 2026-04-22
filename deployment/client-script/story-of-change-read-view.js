@@ -98,7 +98,7 @@ function build_read_view(frm) {
                 '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px;vertical-align:-2px;">' +
                     '<path d="M19 12H5"></path><path d="M12 19l-7-7 7-7"></path>' +
                 '</svg>' +
-                'Back to Hub' +
+                'Back to Stories' +
             '</button>' +
         '</div>' +
 
