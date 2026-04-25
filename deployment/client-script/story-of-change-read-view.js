@@ -2,12 +2,38 @@ frappe.ui.form.on('Story of Change', {
     refresh: function(frm) {
         if (frm.is_new()) return;
 
-        // Build read-view on a short delay so the form fully renders first
-        setTimeout(function() {
-            build_read_view(frm);
-        }, 100);
+        // Resolve state/district display names before building read view
+        resolve_location_names(frm, function() {
+            // Build read-view on a short delay so the form fully renders first
+            setTimeout(function() {
+                build_read_view(frm);
+            }, 100);
+        });
     }
 });
+
+function resolve_location_names(frm, callback) {
+    var pending = 0;
+    var done = function() { pending--; if (pending <= 0) callback(); };
+
+    if (frm.doc.state && !frm._state_display) {
+        pending++;
+        frappe.db.get_value('State', frm.doc.state, 'state_name', function(r) {
+            frm._state_display = (r && r.state_name) || '';
+            done();
+        });
+    }
+
+    if (frm.doc.district && !frm._district_display) {
+        pending++;
+        frappe.db.get_value('District', frm.doc.district, 'district_name', function(r) {
+            frm._district_display = (r && r.district_name) || '';
+            done();
+        });
+    }
+
+    if (pending === 0) callback();
+}
 
 function build_read_view(frm) {
     // Find the Story tab via frm.layout.tabs (Frappe v16 pattern)
@@ -37,14 +63,14 @@ function build_read_view(frm) {
     var date = doc.story_date ? format_date(doc.story_date) : '';
     var theme = doc.theme_name || doc.theme || '';
     var story_type = doc.story_type || '';
-    var state = doc.state || '';
-    var district = doc.district || '';
     var beneficiary = doc.beneficiary_name || '';
     var quote = doc.beneficiary_quote || '';
     var location = doc.beneficiary_location || '';
 
-    // Build location string
-    var loc_parts = [district, state].filter(Boolean);
+    // Build location string — use resolved display names from Link fields
+    var state_name = frm._state_display || '';
+    var district_name = frm._district_display || '';
+    var loc_parts = [district_name, state_name].filter(Boolean);
     var location_str = loc_parts.join(', ');
 
     // Build metadata chips — Date, Status, NGO, Project, Theme, Grant, Location
@@ -76,12 +102,7 @@ function build_read_view(frm) {
         beneficiary_html += '</div>';
     }
 
-    // Build attribution line — NGO + Grant (donor removed per PM feedback)
-    var attribution_html = '';
-    var attr_parts = [ngo, grant].filter(Boolean);
-    if (attr_parts.length) {
-        attribution_html = '<div class="rv-attribution">' + attr_parts.join(' &middot; ') + '</div>';
-    }
+    // Attribution line removed — NGO and Grant already shown as chips above
 
     // Build media gallery (non-cover images)
     var gallery_html = '';
@@ -133,7 +154,6 @@ function build_read_view(frm) {
         '<article class="rv-article">' +
             '<h1 class="rv-title">' + title + '</h1>' +
             '<div class="rv-meta">' + chips.join('') + '</div>' +
-            attribution_html +
             '<div class="rv-narrative">' + narrative + '</div>' +
             beneficiary_html +
             gallery_html +
