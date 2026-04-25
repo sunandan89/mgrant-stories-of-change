@@ -175,10 +175,10 @@
   border-color: #D97706;
   background: #FFFBEB;
 }
-#kpi-showing { border-left-color: #6B7280; }
-#kpi-featured { border-left-color: #16A34A; }
-#kpi-review { border-left-color: #D97706; }
 #kpi-draft { border-left-color: #9CA3AF; }
+#kpi-submitted { border-left-color: #2563EB; }
+#kpi-approved { border-left-color: #D97706; }
+#kpi-featured { border-left-color: #16A34A; }
 .kpi-label {
   font-size: 11px;
   font-weight: 600;
@@ -192,8 +192,9 @@
   font-weight: 700;
   color: #111827;
 }
+#kpi-submitted .kpi-value { color: #2563EB; }
+#kpi-approved .kpi-value { color: #D97706; }
 #kpi-featured .kpi-value { color: #16A34A; }
-#kpi-review .kpi-value { color: #D97706; }
 
 /* Carousel */
 #carousel-section {

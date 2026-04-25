@@ -47,12 +47,14 @@ function build_read_view(frm) {
     var loc_parts = [district, state].filter(Boolean);
     var location_str = loc_parts.join(', ');
 
-    // Build metadata chips — NGO moved to attribution only (#10)
+    // Build metadata chips — Date, Status, NGO, Project, Theme, Grant, Location
     var chips = [];
     if (date) chips.push('<span class="rv-chip rv-chip-date">' + date + '</span>');
     chips.push('<span class="rv-chip rv-chip-status rv-status-' + status.toLowerCase() + '">' + status + '</span>');
-    if (theme) chips.push('<span class="rv-chip rv-chip-theme">' + theme + '</span>');
+    if (ngo) chips.push('<span class="rv-chip rv-chip-ngo">' + ngo + '</span>');
     if (project) chips.push('<span class="rv-chip rv-chip-project">' + project + '</span>');
+    if (theme) chips.push('<span class="rv-chip rv-chip-theme">' + theme + '</span>');
+    if (grant) chips.push('<span class="rv-chip rv-chip-grant">' + grant + '</span>');
     if (location_str) chips.push('<span class="rv-chip rv-chip-location">' + location_str + '</span>');
 
     // Build beneficiary block
@@ -74,9 +76,9 @@ function build_read_view(frm) {
         beneficiary_html += '</div>';
     }
 
-    // Build attribution line — NGO + Grant + Donor
+    // Build attribution line — NGO + Grant (donor removed per PM feedback)
     var attribution_html = '';
-    var attr_parts = [ngo, grant, donor].filter(Boolean);
+    var attr_parts = [ngo, grant].filter(Boolean);
     if (attr_parts.length) {
         attribution_html = '<div class="rv-attribution">' + attr_parts.join(' &middot; ') + '</div>';
     }
@@ -262,8 +264,10 @@ function get_read_view_css() {
     '.rv-status-draft { background: #F3F4F6; color: #6B7280; }' +
     '.rv-status-approved { background: #FEF3C7; color: #B45309; }' +
     '.rv-status-archived { background: #F3F4F6; color: #9CA3AF; }' +
+    '.rv-chip-ngo { background: #ECFDF5; color: #065F46; }' +
     '.rv-chip-theme { background: #E0F2FE; color: #0369A1; }' +
     '.rv-chip-project { background: #F3E8FF; color: #7C3AED; }' +
+    '.rv-chip-grant { background: #FFF7ED; color: #9A3412; }' +
     '.rv-chip-location { background: #FEF3C7; color: #92400E; }' +
 
     /* Attribution */

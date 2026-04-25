@@ -49,21 +49,19 @@
     window.location.href = '/app/story-of-change';
   });
 
-  // ── Clickable KPIs (#6) ──
+  // ── Clickable KPIs — each maps to a workflow status ──
   var kpiMap = {
-    'kpi-featured': 'Featured',
-    'kpi-review': '_review',
-    'kpi-draft': 'Draft'
+    'kpi-draft': 'Draft',
+    'kpi-submitted': 'Submitted',
+    'kpi-approved': 'Approved',
+    'kpi-featured': 'Featured'
   };
   Object.keys(kpiMap).forEach(function(id) {
     $('#' + id).addEventListener('click', function() {
       var val = kpiMap[id];
       var statusSel = $('#filter-status');
-      if (val === '_review') {
-        statusSel.value = 'Submitted';
-      } else {
-        statusSel.value = (statusSel.value === val) ? '' : val;
-      }
+      // Toggle: click again to clear
+      statusSel.value = (statusSel.value === val) ? '' : val;
       $$('.kpi-card').forEach(function(c) { c.classList.remove('kpi-active'); });
       if (statusSel.value) {
         $('#' + id).classList.add('kpi-active');
@@ -71,21 +69,34 @@
       applyFilters();
     });
   });
-  $('#kpi-showing').addEventListener('click', function() {
-    $('#filter-status').value = '';
-    $$('.kpi-card').forEach(function(c) { c.classList.remove('kpi-active'); });
-    applyFilters();
-  });
 
-  // ── Carousel navigation ──
+  // ── Carousel navigation + autoplay ──
+  var autoplayTimer = null;
+
   $('#carousel-prev').addEventListener('click', function() { slideCarousel(-1); });
   $('#carousel-next').addEventListener('click', function() { slideCarousel(1); });
+
+  // Pause autoplay on hover, resume on leave
+  $('#carousel-wrap').addEventListener('mouseenter', function() { stopAutoplay(); });
+  $('#carousel-wrap').addEventListener('mouseleave', function() { startAutoplay(); });
 
   function slideCarousel(dir) {
     var slides = $$('.carousel-slide');
     if (!slides.length) return;
     currentSlide = (currentSlide + dir + slides.length) % slides.length;
     updateCarouselPosition();
+  }
+
+  function startAutoplay() {
+    stopAutoplay();
+    var slides = $$('.carousel-slide');
+    if (slides.length > 1) {
+      autoplayTimer = setInterval(function() { slideCarousel(1); }, 5000);
+    }
+  }
+
+  function stopAutoplay() {
+    if (autoplayTimer) { clearInterval(autoplayTimer); autoplayTimer = null; }
   }
 
   function goToSlide(i) {
@@ -127,6 +138,7 @@
 
     if (!featured || featured.length === 0) {
       section.style.display = 'none';
+      stopAutoplay();
       return;
     }
     section.style.display = '';
@@ -176,6 +188,7 @@
 
     currentSlide = 0;
     updateCarouselPosition();
+    startAutoplay();
   }
 
   // ── Grid rendering ──
@@ -309,14 +322,14 @@
   // ── KPIs: now reactive to filtered set (#2, #6) ──
   function updateKPIs(stories) {
     var list = stories || allStories;
-    var counts = { Draft: 0, Submitted: 0, Approved: 0, Featured: 0, Archived: 0 };
+    var counts = { Draft: 0, Submitted: 0, Approved: 0, Featured: 0 };
     list.forEach(function(s) {
       if (counts.hasOwnProperty(s.status)) counts[s.status]++;
     });
-    $('#kpi-showing .kpi-value').textContent = list.length;
-    $('#kpi-featured .kpi-value').textContent = counts.Featured;
-    $('#kpi-review .kpi-value').textContent = counts.Submitted + counts.Approved;
     $('#kpi-draft .kpi-value').textContent = counts.Draft;
+    $('#kpi-submitted .kpi-value').textContent = counts.Submitted;
+    $('#kpi-approved .kpi-value').textContent = counts.Approved;
+    $('#kpi-featured .kpi-value').textContent = counts.Featured;
   }
 
   // ── Populate filter dropdowns ──
