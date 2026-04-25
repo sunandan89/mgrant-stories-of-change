@@ -12,25 +12,24 @@
         <p id="hub-subtitle">Impact stories from the field — curated by the communications team</p>
       </div>
     </div>
-    <button id="btn-new-story">+ New Story</button>
-  </div>
-
-  <div id="kpi-row">
-    <div class="kpi-card" id="kpi-total">
-      <span class="kpi-label">Total Stories</span>
-      <span class="kpi-value">—</span>
-    </div>
-    <div class="kpi-card" id="kpi-featured">
-      <span class="kpi-label">Featured</span>
-      <span class="kpi-value">—</span>
-    </div>
-    <div class="kpi-card" id="kpi-submitted">
-      <span class="kpi-label">Submitted</span>
-      <span class="kpi-value">—</span>
-    </div>
-    <div class="kpi-card" id="kpi-draft">
-      <span class="kpi-label">Drafts</span>
-      <span class="kpi-value">—</span>
+    <div id="header-right">
+      <div id="view-toggle">
+        <button class="vt-btn vt-active" id="btn-grid" title="Grid view">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect>
+            <rect x="3" y="14" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect>
+          </svg>
+        </button>
+        <button class="vt-btn" id="btn-list" title="List view">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line>
+            <line x1="8" y1="18" x2="21" y2="18"></line>
+            <line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line>
+            <line x1="3" y1="18" x2="3.01" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <button id="btn-new-story">+ New Story</button>
     </div>
   </div>
 
@@ -58,9 +57,47 @@
       <label>Theme</label>
       <select id="filter-theme"><option value="">All Themes</option></select>
     </div>
+    <div class="filter-group">
+      <label>Project</label>
+      <select id="filter-project"><option value="">All Projects</option></select>
+    </div>
+    <div class="filter-group">
+      <label>Grant</label>
+      <select id="filter-grant"><option value="">All Grants</option></select>
+    </div>
     <button id="btn-reset" style="display:none;">Reset</button>
   </div>
 
+  <div id="kpi-row">
+    <div class="kpi-card" id="kpi-showing">
+      <span class="kpi-label">Showing</span>
+      <span class="kpi-value">—</span>
+    </div>
+    <div class="kpi-card" id="kpi-featured">
+      <span class="kpi-label">Featured</span>
+      <span class="kpi-value">—</span>
+    </div>
+    <div class="kpi-card" id="kpi-review">
+      <span class="kpi-label">In Review</span>
+      <span class="kpi-value">—</span>
+    </div>
+    <div class="kpi-card" id="kpi-draft">
+      <span class="kpi-label">Drafts</span>
+      <span class="kpi-value">—</span>
+    </div>
+  </div>
+
+  <div id="carousel-section" style="display:none;">
+    <div id="carousel-label">Featured Stories</div>
+    <div id="carousel-wrap">
+      <button class="carousel-nav carousel-prev" id="carousel-prev">&#8249;</button>
+      <button class="carousel-nav carousel-next" id="carousel-next">&#8250;</button>
+      <div id="carousel-track"></div>
+      <div id="carousel-dots"></div>
+    </div>
+  </div>
+
+  <div id="grid-label" style="display:none;">All Stories</div>
   <div id="stories-grid"></div>
 
   <div id="empty-state" style="display:none;">

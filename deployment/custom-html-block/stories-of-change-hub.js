@@ -4,25 +4,25 @@
   var $$ = function(sel) { return root_element.querySelectorAll(sel); };
 
   var allStories = [];
+  var currentSlide = 0;
 
   function goToNewStory() { window.location.href = '/app/story-of-change/new'; }
   function goToStory(name) { window.location.href = '/app/story-of-change/' + name; }
 
+  // ── Event listeners ──
   $('#btn-new-story').addEventListener('click', goToNewStory);
   $('#btn-empty-new').addEventListener('click', goToNewStory);
   $('#filter-status').addEventListener('change', applyFilters);
   $('#filter-ngo').addEventListener('change', applyFilters);
   $('#filter-theme').addEventListener('change', applyFilters);
+  $('#filter-project').addEventListener('change', applyFilters);
+  $('#filter-grant').addEventListener('change', applyFilters);
+
   var searchTimeout;
   $('#filter-search').addEventListener('input', function() {
     clearTimeout(searchTimeout);
     searchTimeout = setTimeout(applyFilters, 300);
   });
-  // Stop ALL key events from bubbling out of shadow DOM —
-  // Frappe's global Awesomebar handler intercepts keystrokes when
-  // document.activeElement is the shadow host (not our inner input),
-  // redirecting typing to the navbar search. Blocking propagation
-  // on keydown/keypress/keyup keeps input inside the hub search.
   ['keydown', 'keypress', 'keyup'].forEach(function(evt) {
     $('#filter-search').addEventListener(evt, function(e) {
       e.stopPropagation();
@@ -37,10 +37,71 @@
     $('#filter-status').value = '';
     $('#filter-ngo').value = '';
     $('#filter-theme').value = '';
+    $('#filter-project').value = '';
+    $('#filter-grant').value = '';
     $('#filter-search').value = '';
+    $$('.kpi-card').forEach(function(c) { c.classList.remove('kpi-active'); });
     applyFilters();
   });
 
+  // ── View toggle: grid = this hub, list = native Frappe list ──
+  $('#btn-list').addEventListener('click', function() {
+    window.location.href = '/app/story-of-change';
+  });
+
+  // ── Clickable KPIs (#6) ──
+  var kpiMap = {
+    'kpi-featured': 'Featured',
+    'kpi-review': '_review',
+    'kpi-draft': 'Draft'
+  };
+  Object.keys(kpiMap).forEach(function(id) {
+    $('#' + id).addEventListener('click', function() {
+      var val = kpiMap[id];
+      var statusSel = $('#filter-status');
+      if (val === '_review') {
+        statusSel.value = 'Submitted';
+      } else {
+        statusSel.value = (statusSel.value === val) ? '' : val;
+      }
+      $$('.kpi-card').forEach(function(c) { c.classList.remove('kpi-active'); });
+      if (statusSel.value) {
+        $('#' + id).classList.add('kpi-active');
+      }
+      applyFilters();
+    });
+  });
+  $('#kpi-showing').addEventListener('click', function() {
+    $('#filter-status').value = '';
+    $$('.kpi-card').forEach(function(c) { c.classList.remove('kpi-active'); });
+    applyFilters();
+  });
+
+  // ── Carousel navigation ──
+  $('#carousel-prev').addEventListener('click', function() { slideCarousel(-1); });
+  $('#carousel-next').addEventListener('click', function() { slideCarousel(1); });
+
+  function slideCarousel(dir) {
+    var slides = $$('.carousel-slide');
+    if (!slides.length) return;
+    currentSlide = (currentSlide + dir + slides.length) % slides.length;
+    updateCarouselPosition();
+  }
+
+  function goToSlide(i) {
+    currentSlide = i;
+    updateCarouselPosition();
+  }
+
+  function updateCarouselPosition() {
+    var track = $('#carousel-track');
+    if (track) track.style.transform = 'translateX(-' + (currentSlide * 100) + '%)';
+    $$('.carousel-dot').forEach(function(d, idx) {
+      d.classList.toggle('dot-active', idx === currentSlide);
+    });
+  }
+
+  // ── Utilities ──
   function fmtDate(d) {
     if (!d) return '';
     var parts = d.split('-');
@@ -58,27 +119,96 @@
     return tmp.textContent || tmp.innerText || '';
   }
 
-  function renderStories(stories) {
+  // ── Carousel rendering ──
+  function renderCarousel(featured) {
+    var section = $('#carousel-section');
+    var track = $('#carousel-track');
+    var dots = $('#carousel-dots');
+
+    if (!featured || featured.length === 0) {
+      section.style.display = 'none';
+      return;
+    }
+    section.style.display = '';
+    track.innerHTML = '';
+    dots.innerHTML = '';
+
+    var icons = ['\u{1F4D6}', '\u{1F331}', '\u{2728}', '\u{1F3AF}', '\u{1F4A1}', '\u{1F30D}'];
+
+    featured.forEach(function(s, i) {
+      var imageHtml = '';
+      if (s.cover_image) {
+        imageHtml = '<img src="' + s.cover_image + '" alt="" />';
+      } else {
+        var icon = icons[Math.abs(s.name.charCodeAt(s.name.length-1)) % icons.length];
+        imageHtml = '<span style="font-size:48px;">' + icon + '</span>';
+      }
+
+      var narrativePreview = stripHtml(s.narrative || '');
+      var excerptHtml = narrativePreview ?
+        '<p class="carousel-slide-excerpt">' + narrativePreview + '</p>' : '';
+
+      var slide = document.createElement('div');
+      slide.className = 'carousel-slide';
+      slide.innerHTML =
+        '<div class="carousel-slide-image">' + imageHtml + '</div>' +
+        '<div class="carousel-slide-body">' +
+          '<span class="carousel-slide-badge">Featured</span>' +
+          '<h3 class="carousel-slide-title">' + (s.title || 'Untitled Story') + '</h3>' +
+          '<p class="carousel-slide-ngo">' + (s.ngo_name || '') + '</p>' +
+          (s.grant_name ? '<p class="carousel-slide-grant">' + s.grant_name + '</p>' : '') +
+          excerptHtml +
+        '</div>';
+      slide.addEventListener('click', function() { goToStory(s.name); });
+      track.appendChild(slide);
+
+      var dot = document.createElement('button');
+      dot.className = 'carousel-dot' + (i === 0 ? ' dot-active' : '');
+      dot.addEventListener('click', function() { goToSlide(i); });
+      dots.appendChild(dot);
+    });
+
+    // Hide nav if only 1 slide
+    $('#carousel-prev').style.display = featured.length <= 1 ? 'none' : '';
+    $('#carousel-next').style.display = featured.length <= 1 ? 'none' : '';
+    if (featured.length <= 1) dots.style.display = 'none';
+    else dots.style.display = '';
+
+    currentSlide = 0;
+    updateCarouselPosition();
+  }
+
+  // ── Grid rendering ──
+  function renderStories(stories, featured) {
     var grid = $('#stories-grid');
+    var gridLabel = $('#grid-label');
     grid.innerHTML = '';
 
-    if (stories.length === 0) {
+    // Filter out featured from grid (they're in the carousel)
+    var featuredNames = {};
+    (featured || []).forEach(function(f) { featuredNames[f.name] = true; });
+    var gridStories = stories.filter(function(s) { return !featuredNames[s.name]; });
+
+    if (gridStories.length === 0 && (!featured || featured.length === 0)) {
       grid.style.display = 'none';
+      gridLabel.style.display = 'none';
       $('#empty-state').style.display = 'block';
       return;
     }
     grid.style.display = '';
+    gridLabel.style.display = (featured && featured.length > 0) ? '' : 'none';
     $('#empty-state').style.display = 'none';
 
-    stories.forEach(function(s) {
+    var icons = ['\u{1F4D6}', '\u{1F331}', '\u{2728}', '\u{1F3AF}', '\u{1F4A1}', '\u{1F30D}'];
+
+    gridStories.forEach(function(s) {
       var card = document.createElement('div');
-      card.className = 'story-card' + (s.status === 'Featured' ? ' card-featured' : '');
+      card.className = 'story-card';
 
       var imageInner = '';
       if (s.cover_image) {
         imageInner = '<div class="card-image"><img src="' + s.cover_image + '" alt="" /></div>';
       } else {
-        var icons = ['\u{1F4D6}', '\u{1F331}', '\u{2728}', '\u{1F3AF}', '\u{1F4A1}', '\u{1F30D}'];
         var icon = icons[Math.abs(s.name.charCodeAt(s.name.length-1)) % icons.length];
         imageInner = '<div class="card-image">' + icon + '</div>';
       }
@@ -104,7 +234,7 @@
     });
   }
 
-  // ── Trigram fuzzy matching utilities ──
+  // ── Trigram fuzzy matching ──
   function trigrams(str) {
     var t = {};
     var s = '  ' + str.toLowerCase().replace(/\s+/g, ' ').trim() + '  ';
@@ -121,7 +251,7 @@
     return total ? shared / total : 0;
   }
 
-  var FUZZY_THRESHOLD = 0.3;
+  var FUZZY_THRESHOLD = 0.4;
 
   function fuzzyMatchFields(word, fieldValues) {
     return fieldValues.some(function(val) {
@@ -133,89 +263,106 @@
     });
   }
 
+  // ── Filter + render pipeline ──
   function applyFilters() {
     var status = $('#filter-status').value;
     var ngo = $('#filter-ngo').value;
     var theme = $('#filter-theme').value;
+    var project = $('#filter-project').value;
+    var grant = $('#filter-grant').value;
     var search = ($('#filter-search').value || '').toLowerCase().trim();
-    var hasFilter = status || ngo || theme || search;
+    var hasFilter = status || ngo || theme || project || grant || search;
     $('#btn-reset').style.display = hasFilter ? '' : 'none';
 
     var filtered = allStories.filter(function(s) {
       if (status && s.status !== status) return false;
       if (ngo && s.ngo_name !== ngo) return false;
-      if (theme && s.theme !== theme) return false;
+      if (theme && (s.theme_name || s.theme) !== theme) return false;
+      if (project && (s.project_name || '') !== project) return false;
+      if (grant && s.grant_name !== grant) return false;
       if (search) {
         var searchableFields = [
-          s.title, s.ngo_name, s.grant_name, s.theme,
-          s.story_type, s.state, s.district, s.name
+          s.title, s.ngo_name, s.grant_name, s.theme_name, s.theme,
+          s.state, s.district, s.name, s.project_name, s.donor_name
         ];
         var hay = searchableFields.concat([stripHtml(s.narrative || '')])
           .filter(Boolean).join(' ').toLowerCase();
         var words = search.split(/\s+/);
         var match = words.every(function(word) {
-          // Fast path: exact substring
           if (hay.indexOf(word) !== -1) return true;
-          // Fuzzy fallback: trigram similarity against individual fields
           return fuzzyMatchFields(word, searchableFields.filter(Boolean));
         });
         if (!match) return false;
       }
       return true;
     });
-    renderStories(filtered);
+
+    // Split featured from rest
+    var featured = filtered.filter(function(s) { return s.status === 'Featured'; });
+    var rest = filtered;
+
+    renderCarousel(featured);
+    renderStories(rest, featured);
+    updateKPIs(filtered);
   }
 
-  function updateKPIs() {
+  // ── KPIs: now reactive to filtered set (#2, #6) ──
+  function updateKPIs(stories) {
+    var list = stories || allStories;
     var counts = { Draft: 0, Submitted: 0, Approved: 0, Featured: 0, Archived: 0 };
-    allStories.forEach(function(s) {
+    list.forEach(function(s) {
       if (counts.hasOwnProperty(s.status)) counts[s.status]++;
     });
-    $('#kpi-total .kpi-value').textContent = allStories.length;
+    $('#kpi-showing .kpi-value').textContent = list.length;
     $('#kpi-featured .kpi-value').textContent = counts.Featured;
-    $('#kpi-submitted .kpi-value').textContent = counts.Submitted + counts.Approved;
+    $('#kpi-review .kpi-value').textContent = counts.Submitted + counts.Approved;
     $('#kpi-draft .kpi-value').textContent = counts.Draft;
   }
 
+  // ── Populate filter dropdowns ──
   function populateFilterOptions() {
-    var ngos = {}, themes = {};
+    var ngos = {}, themes = {}, projects = {}, grants = {};
     allStories.forEach(function(s) {
       if (s.ngo_name) ngos[s.ngo_name] = true;
-      if (s.theme) themes[s.theme] = true;
+      var tn = s.theme_name || s.theme;
+      if (tn) themes[tn] = true;
+      if (s.project_name) projects[s.project_name] = true;
+      if (s.grant_name) grants[s.grant_name] = true;
     });
-    var ngoSel = $('#filter-ngo');
-    Object.keys(ngos).sort().forEach(function(n) {
-      var opt = document.createElement('option');
-      opt.value = n; opt.textContent = n;
-      ngoSel.appendChild(opt);
-    });
-    var themeSel = $('#filter-theme');
-    Object.keys(themes).sort().forEach(function(t) {
-      var opt = document.createElement('option');
-      opt.value = t; opt.textContent = t;
-      themeSel.appendChild(opt);
-    });
+
+    function fillSelect(sel, items) {
+      Object.keys(items).sort().forEach(function(v) {
+        var opt = document.createElement('option');
+        opt.value = v; opt.textContent = v;
+        sel.appendChild(opt);
+      });
+    }
+
+    fillSelect($('#filter-ngo'), ngos);
+    fillSelect($('#filter-theme'), themes);
+    fillSelect($('#filter-project'), projects);
+    fillSelect($('#filter-grant'), grants);
   }
 
-  // Main: fetch story list and render
+  // ── Main: fetch and render ──
   frappe.call({
     method: 'frappe.client.get_list',
     args: {
       doctype: 'Story of Change',
       fields: ['name', 'title', 'story_date', 'status', 'cover_image',
                'ngo_name', 'grant', 'grant_name', 'narrative', 'theme',
-               'story_type', 'state', 'district'],
+               'theme_name', 'project_name', 'donor_name',
+               'state', 'district'],
       filters: [['status', '!=', 'Archived']],
-      order_by: 'creation desc',
+      order_by: 'story_date desc',
       limit_page_length: 100
     },
     async: true,
     callback: function(r) {
       allStories = r.message || [];
       $('#loading-state').style.display = 'none';
-      updateKPIs();
       populateFilterOptions();
-      renderStories(allStories);
+      applyFilters();
     },
     error: function() {
       $('#loading-state').style.display = 'none';

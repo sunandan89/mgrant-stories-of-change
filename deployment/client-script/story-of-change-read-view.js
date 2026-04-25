@@ -31,9 +31,11 @@ function build_read_view(frm) {
     var cover = doc.cover_image || '';
     var ngo = doc.ngo_name || '';
     var grant = doc.grant_name || '';
+    var donor = doc.donor_name || doc.donor || '';
+    var project = doc.project_name || doc.project || '';
     var status = doc.status || 'Draft';
     var date = doc.story_date ? format_date(doc.story_date) : '';
-    var theme = doc.theme || '';
+    var theme = doc.theme_name || doc.theme || '';
     var story_type = doc.story_type || '';
     var state = doc.state || '';
     var district = doc.district || '';
@@ -45,12 +47,12 @@ function build_read_view(frm) {
     var loc_parts = [district, state].filter(Boolean);
     var location_str = loc_parts.join(', ');
 
-    // Build metadata chips
+    // Build metadata chips — NGO moved to attribution only (#10)
     var chips = [];
     if (date) chips.push('<span class="rv-chip rv-chip-date">' + date + '</span>');
     chips.push('<span class="rv-chip rv-chip-status rv-status-' + status.toLowerCase() + '">' + status + '</span>');
-    if (ngo) chips.push('<span class="rv-chip rv-chip-ngo">' + ngo + '</span>');
     if (theme) chips.push('<span class="rv-chip rv-chip-theme">' + theme + '</span>');
+    if (project) chips.push('<span class="rv-chip rv-chip-project">' + project + '</span>');
     if (location_str) chips.push('<span class="rv-chip rv-chip-location">' + location_str + '</span>');
 
     // Build beneficiary block
@@ -72,13 +74,11 @@ function build_read_view(frm) {
         beneficiary_html += '</div>';
     }
 
-    // Build grant attribution
+    // Build attribution line — NGO + Grant + Donor
     var attribution_html = '';
-    if (grant || ngo) {
-        var parts = [];
-        if (ngo) parts.push(ngo);
-        if (grant) parts.push(grant);
-        attribution_html = '<div class="rv-attribution">' + parts.join(' &middot; ') + '</div>';
+    var attr_parts = [ngo, grant, donor].filter(Boolean);
+    if (attr_parts.length) {
+        attribution_html = '<div class="rv-attribution">' + attr_parts.join(' &middot; ') + '</div>';
     }
 
     // Build media gallery (non-cover images)
@@ -262,8 +262,8 @@ function get_read_view_css() {
     '.rv-status-draft { background: #F3F4F6; color: #6B7280; }' +
     '.rv-status-approved { background: #FEF3C7; color: #B45309; }' +
     '.rv-status-archived { background: #F3F4F6; color: #9CA3AF; }' +
-    '.rv-chip-ngo { background: #EDE9FE; color: #6D28D9; }' +
     '.rv-chip-theme { background: #E0F2FE; color: #0369A1; }' +
+    '.rv-chip-project { background: #F3E8FF; color: #7C3AED; }' +
     '.rv-chip-location { background: #FEF3C7; color: #92400E; }' +
 
     /* Attribution */

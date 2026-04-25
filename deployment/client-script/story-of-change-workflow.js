@@ -46,6 +46,9 @@ frappe.ui.form.on('Story of Change', {
                 return { filters: { name: ['in', frm._grant_themes] } };
             });
         }
+
+        // Cascading district filter: only show districts for selected state (#13)
+        setup_district_filter(frm);
     },
 
     grant: function(frm) {
@@ -64,8 +67,9 @@ frappe.ui.form.on('Story of Change', {
     },
 
     state: function(frm) {
-        // When state changes, clear district so user picks fresh
+        // When state changes, clear district and update filter
         frm.set_value('district', '');
+        setup_district_filter(frm);
     }
 });
 
@@ -129,7 +133,31 @@ function auto_fetch_from_grant(frm) {
 }
 
 
-// ─── 2. CONSENT REQUIREMENT ───────────────────────────────────────
+// ─── 2. CASCADING DISTRICT FILTER (#13) ───────────────────────────
+// District DocType has a 'state' Link field — filter districts to selected state
+function setup_district_filter(frm) {
+    if (frm.doc.state) {
+        frm.set_query('district', function() {
+            var filters = { state: frm.doc.state };
+            // If grant has specific districts, further restrict
+            if (frm._grant_districts && frm._grant_districts.length) {
+                filters.name = ['in', frm._grant_districts];
+            }
+            return { filters: filters };
+        });
+    } else if (frm._grant_districts && frm._grant_districts.length) {
+        // No state selected but grant has districts — restrict to grant's districts
+        frm.set_query('district', function() {
+            return { filters: { name: ['in', frm._grant_districts] } };
+        });
+    } else {
+        // No constraints — clear any previous filter
+        frm.set_query('district', function() { return {}; });
+    }
+}
+
+
+// ─── 3. CONSENT REQUIREMENT ───────────────────────────────────────
 function update_consent_requirement(frm) {
     var is_beneficiary = frm.doc.story_type === 'Beneficiary Story';
 
