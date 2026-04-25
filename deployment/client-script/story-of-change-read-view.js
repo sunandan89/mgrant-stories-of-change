@@ -78,9 +78,9 @@ function build_read_view(frm) {
     if (date) chips.push('<span class="rv-chip rv-chip-date">' + date + '</span>');
     chips.push('<span class="rv-chip rv-chip-status rv-status-' + status.toLowerCase() + '">' + status + '</span>');
     if (ngo) chips.push('<span class="rv-chip rv-chip-ngo">' + ngo + '</span>');
+    if (grant) chips.push('<span class="rv-chip rv-chip-grant">' + grant + '</span>');
     if (project) chips.push('<span class="rv-chip rv-chip-project">' + project + '</span>');
     if (theme) chips.push('<span class="rv-chip rv-chip-theme">' + theme + '</span>');
-    if (grant) chips.push('<span class="rv-chip rv-chip-grant">' + grant + '</span>');
     if (location_str) chips.push('<span class="rv-chip rv-chip-location">' + location_str + '</span>');
 
     // Build beneficiary block
@@ -240,12 +240,12 @@ function get_read_view_css() {
     '  overflow: hidden;' +
     '  margin-bottom: 32px;' +
     '  box-shadow: 0 4px 20px rgba(0,0,0,0.08);' +
-    '  max-height: 420px;' +
+    '  max-height: 280px;' +
     '}' +
     '.rv-hero img {' +
     '  width: 100%;' +
     '  height: auto;' +
-    '  max-height: 420px;' +
+    '  max-height: 280px;' +
     '  object-fit: cover;' +
     '  display: block;' +
     '}' +
